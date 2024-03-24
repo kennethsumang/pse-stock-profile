@@ -19,20 +19,21 @@ export async function GET(request: NextRequest, response: NextResponse) {
 
   if (searchValue) {
     companyResponse = await companyRequest
-      .select()
+      .select("*", { count: "exact" })
       .or(`company_name.ilike.%${searchValue}%,symbol.ilike.%${searchValue}%`)
       .order("id", { ascending: true })
       .range(offsetFrom, offsetTo);
   } else {
     companyResponse = await companyRequest
-      .select()
+      .select("*", { count: "exact" })
       .order("id", { ascending: true })
       .range(offsetFrom, offsetTo);
   }
 
   return Response.json(
     { 
-      data: companyResponse.data
+      data: companyResponse.data,
+      total: companyResponse.count,
     },
   );
 }
