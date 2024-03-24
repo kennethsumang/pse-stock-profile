@@ -5,6 +5,9 @@ import { useDisclosure } from "@mantine/hooks";
 import { IconBrandMantine, IconBuilding, IconHome2, IconLogout } from "@tabler/icons-react";
 import NavbarNewMenuButton from "./NavbarNewMenuButton";
 import { useRouter } from "next/navigation";
+import RequestLibrary from "@/app/_libraries/request.library";
+import { getCurrentDomain } from "@/app/_utils/http.library";
+import useToast from "@/app/_hooks/useToast";
 
 interface Props {
   children: React.ReactNode;
@@ -12,11 +15,36 @@ interface Props {
   
 export default function AppLayout({ children }: Props) {
   const router = useRouter();
+  const toast = useToast();
   const [opened, { toggle }] = useDisclosure();
 
   function handleNavClick(e: React.MouseEvent ,href: string) {
     e.preventDefault();
     router.push(href);
+  }
+
+  async function handleLogoutClick() {
+    const response = await requestLogout();
+    if (!response) {
+      toast("error", "Logout failed.");
+      return;
+    }
+
+    toast("success", "Logged out successfully!");
+    router.push("/");
+  }
+
+  async function requestLogout(): Promise<boolean> {
+    try {
+      const response = await RequestLibrary.request<{ data: string }>(
+        `${getCurrentDomain()}/api/auth/logout`,
+        { method: 'POST' },
+      );
+
+      return true;
+    } catch (e) {
+      return false;
+    }
   }
 
   return (
@@ -51,7 +79,7 @@ export default function AppLayout({ children }: Props) {
             onClick={(e) => handleNavClick(e, "/app/companies")}
           />
         </div></div><div>
-        <Button color="red" fullWidth style={{ marginBottom: "auto" }}>
+        <Button color="red" fullWidth style={{ marginBottom: "auto" }} onClick={() => handleLogoutClick()}>
           <IconLogout size={20}  />
           <Text pl="1rem">Logout</Text>
         </Button></div>
