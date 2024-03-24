@@ -59,7 +59,9 @@ export default function AppLayout({ children }: Props) {
       <AppShell.Main>
         { children }
       </AppShell.Main>
-      <AppShell.Footer p="md">Footer</AppShell.Footer>
+      <AppShell.Footer p="md" ta="center">
+        { `© Kenneth Sumang, ${new Date().getFullYear()}` }
+      </AppShell.Footer>
     </AppShell>
   );
 }
