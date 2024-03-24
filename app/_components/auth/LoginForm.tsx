@@ -7,7 +7,7 @@ import RequestLibrary from "@/app/_libraries/request.library";
 import { getCurrentDomain } from "@/app/_utils/http.library";
 import { useAuthStore } from "@/app/_store";
 import { AuthUser } from "@/app/_types/auth";
-import { redirect } from 'next/navigation'
+import { redirect } from "next/navigation";
 
 /**
  * LoginForm component
@@ -70,6 +70,7 @@ export default function LoginForm() {
           withAsterisk
           label="Email"
           type="email"
+          required
           {...form.getInputProps("email")}
         />
         <TextInput
@@ -77,10 +78,11 @@ export default function LoginForm() {
           withAsterisk
           label="Password"
           type="password"
+          required
           {...form.getInputProps("password")}
         />
         <Group justify="flex-end" mt="md">
-          <Button type="submit">Submit</Button>
+          <Button type="submit">Login</Button>
         </Group>
       </form>
     </>
