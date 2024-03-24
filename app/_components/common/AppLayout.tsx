@@ -8,6 +8,7 @@ import { useRouter, usePathname } from "next/navigation";
 import RequestLibrary from "@/app/_libraries/request.library";
 import { getCurrentDomain } from "@/app/_utils/http.library";
 import useToast from "@/app/_hooks/useToast";
+import Link from "next/link";
 
 interface Props {
   children: React.ReactNode;
@@ -90,8 +91,18 @@ export default function AppLayout({ children }: Props) {
       <AppShell.Main>
         { children }
       </AppShell.Main>
-      <AppShell.Footer p="md" ta="center">
-        { `© Kenneth Sumang, ${new Date().getFullYear()}` }
+      <AppShell.Footer
+        p="sm"
+        style={{
+          display: "flex",
+          flexDirection: "column",
+          width: "100%",
+          alignItems: "center",
+          paddingBottom: "1rem"
+        }}
+      >
+        <span>{ `© Kenneth Sumang, ${new Date().getFullYear()}` }</span>
+        <span>Made with ❤️ using <Link href="https://mantine.dev/" target="_blank">Mantine</Link></span>
       </AppShell.Footer>
     </AppShell>
   );
