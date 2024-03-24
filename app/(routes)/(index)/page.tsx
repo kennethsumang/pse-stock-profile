@@ -1,11 +1,20 @@
 import LoginContainer from "@/app/_components/auth/LoginContainer";
 import classes from "./page.module.css";
+import { createClient } from "@/app/_utils/supabase/server";
+import { redirect } from "next/navigation";
 
 /**
  * IndexPage component
  * @author Kenneth Sumang
  */
-export default function Page() {
+export default async function Page() {
+  const supabase = createClient();
+  const { data, error } = await supabase.auth.getUser();
+
+  if (!error && data?.user) {
+    redirect("/app");
+  }
+
   return (
     <div className={classes.container}>
       <LoginContainer />
