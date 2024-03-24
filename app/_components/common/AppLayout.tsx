@@ -1,8 +1,8 @@
 "use client";
 
-import { AppShell, Burger, Group, NavLink, Text, rem } from "@mantine/core";
+import { AppShell, Burger, Button, Group, NavLink, Text, rem } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
-import { IconBrandMantine, IconBuilding, IconHome2 } from "@tabler/icons-react";
+import { IconBrandMantine, IconBuilding, IconHome2, IconLogout } from "@tabler/icons-react";
 import NavbarNewMenuButton from "./NavbarNewMenuButton";
 import { useRouter } from "next/navigation";
 
@@ -34,7 +34,8 @@ export default function AppLayout({ children }: Props) {
           <Text size="lg">PSE Stock Profile</Text>
         </Group>
       </AppShell.Header>
-      <AppShell.Navbar p="md">
+      <AppShell.Navbar p="md" style={{display: "flex", flexDirection: "column", justifyContent: "space-between"}}>
+        <div>
         <NavbarNewMenuButton />
         <div style={{ marginTop: rem(1) }}>
           <NavLink
@@ -49,7 +50,11 @@ export default function AppLayout({ children }: Props) {
             leftSection={<IconBuilding size={20} />}
             onClick={(e) => handleNavClick(e, "/app/companies")}
           />
-        </div>
+        </div></div><div>
+        <Button color="red" fullWidth style={{ marginBottom: "auto" }}>
+          <IconLogout size={20}  />
+          <Text pl="1rem">Logout</Text>
+        </Button></div>
       </AppShell.Navbar>
       <AppShell.Main>
         { children }

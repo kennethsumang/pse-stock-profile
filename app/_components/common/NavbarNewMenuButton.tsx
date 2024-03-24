@@ -16,7 +16,7 @@ export default function NavbarNewMenuButton() {
   return (
     <Menu shadow="md" width={200}>
       <Menu.Target>
-        <Button>
+        <Button fullWidth>
             <IconPlus size={20}  />
             <Text pl="1rem">New</Text>
         </Button>
