@@ -4,7 +4,7 @@ import { AppShell, Burger, Button, Group, NavLink, Text, rem } from "@mantine/co
 import { useDisclosure } from "@mantine/hooks";
 import { IconBrandMantine, IconBuilding, IconHome2, IconLogout } from "@tabler/icons-react";
 import NavbarNewMenuButton from "./NavbarNewMenuButton";
-import { useRouter } from "next/navigation";
+import { useRouter, usePathname } from "next/navigation";
 import RequestLibrary from "@/app/_libraries/request.library";
 import { getCurrentDomain } from "@/app/_utils/http.library";
 import useToast from "@/app/_hooks/useToast";
@@ -15,6 +15,7 @@ interface Props {
   
 export default function AppLayout({ children }: Props) {
   const router = useRouter();
+  const pathname = usePathname();
   const toast = useToast();
   const [opened, { toggle }] = useDisclosure();
 
@@ -67,12 +68,14 @@ export default function AppLayout({ children }: Props) {
         <NavbarNewMenuButton />
         <div style={{ marginTop: rem(20) }}>
           <NavLink
+            active={pathname === "/app"}
             href=""
             label="Home"
             leftSection={<IconHome2 size={20} />}
             onClick={(e) => handleNavClick(e, "/app")}
           />
           <NavLink
+            active={pathname === "/app/companies"}
             href=""
             label="Company List"
             leftSection={<IconBuilding size={20} />}
