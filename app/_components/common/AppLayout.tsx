@@ -37,7 +37,7 @@ export default function AppLayout({ children }: Props) {
       <AppShell.Navbar p="md" style={{display: "flex", flexDirection: "column", justifyContent: "space-between"}}>
         <div>
         <NavbarNewMenuButton />
-        <div style={{ marginTop: rem(1) }}>
+        <div style={{ marginTop: rem(20) }}>
           <NavLink
             href=""
             label="Home"
