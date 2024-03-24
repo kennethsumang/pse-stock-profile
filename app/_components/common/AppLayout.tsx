@@ -9,6 +9,7 @@ import RequestLibrary from "@/app/_libraries/request.library";
 import { getCurrentDomain } from "@/app/_utils/http.library";
 import useToast from "@/app/_hooks/useToast";
 import Link from "next/link";
+import { useAuthStore } from "@/app/_store";
 
 interface Props {
   children: React.ReactNode;
@@ -18,6 +19,7 @@ export default function AppLayout({ children }: Props) {
   const router = useRouter();
   const pathname = usePathname();
   const toast = useToast();
+  const auth = useAuthStore((state) => state);
   const [opened, { toggle }] = useDisclosure();
 
   function handleNavClick(e: React.MouseEvent ,href: string) {
@@ -33,6 +35,7 @@ export default function AppLayout({ children }: Props) {
     }
 
     toast("success", "Logged out successfully!");
+    auth.logoutUser();
     router.push("/");
   }
 
