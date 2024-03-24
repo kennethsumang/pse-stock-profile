@@ -2,7 +2,6 @@
 
 import { Paper, Text } from "@mantine/core";
 import LoginForm from "./LoginForm";
-import classes from "./LoginContainer.module.css";
 import Link from "next/link";
 
 /**
@@ -20,7 +19,12 @@ export default function LoginContainer() {
       p="3rem"
     >
       <Text
-        className={classes.header}
+        style={{
+          fontSize: "1.5rem",
+          lineHeight: "2rem",
+          fontWeight: "700",
+          paddingBottom: "2rem",
+        }}
         variant="text"
         size="xl"
       >

@@ -2,7 +2,6 @@
 
 import { Button, Group, TextInput } from "@mantine/core";
 import { useForm } from "@mantine/form";
-import classes from "./LoginForm.module.css";
 import useToast from "@/app/_hooks/useToast";
 import RequestLibrary from "@/app/_libraries/request.library";
 import { getCurrentDomain } from "@/app/_utils/http.library";
@@ -55,10 +54,11 @@ export default function LoginForm() {
       );
 
       auth.loginUser(response.data);
-      redirect('/app');
       toast('success', 'Login successful!');
+      redirect('/app');
     } catch (e) {
       toast('error', (e as Error).message);
+      console.error(e);
     }
   }
 
@@ -66,14 +66,14 @@ export default function LoginForm() {
     <>
       <form onSubmit={form.onSubmit((values) => handleLoginFormSubmit(values))}>
         <TextInput
-          className={classes.field}
+          style={{ marginBottom: "1rem" }}
           withAsterisk
           label="Email"
           type="email"
           {...form.getInputProps("email")}
         />
         <TextInput
-          className={classes.field}
+          style={{ marginBottom: "1rem" }}
           withAsterisk
           label="Password"
           type="password"
