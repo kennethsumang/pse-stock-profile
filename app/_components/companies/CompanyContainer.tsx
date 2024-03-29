@@ -48,8 +48,16 @@ export default function CompanyContainer() {
         || companySymbol.includes(filterLowered)
         || companyName.includes(filterLowered);
     });
-    setTotalPages(Math.ceil(filteredCompanies.length / limitPerPage));
-    const offset = (page - 1) * limitPerPage;
+
+    const totalPageCount = Math.ceil(filteredCompanies.length / limitPerPage);
+    setTotalPages(totalPageCount);
+
+    let activePage = page;
+    if (activePage > totalPageCount) {
+      activePage = totalPageCount;
+    }
+    const offset = (activePage - 1) * limitPerPage;
+    setPage(activePage);
     return filteredCompanies.slice(offset, offset + limitPerPage);
   }
 
