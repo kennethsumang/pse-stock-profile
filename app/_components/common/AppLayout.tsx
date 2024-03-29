@@ -57,7 +57,7 @@ export default function AppLayout({ children }: Props) {
       header={{ height: 60 }}
       footer={{ height: 60 }}
       navbar={{ width: 300, breakpoint: "sm", collapsed: { mobile: !opened } }}
-      aside={{ width: 300, breakpoint: "md", collapsed: { desktop: false, mobile: true } }}
+      // aside={{ width: 300, breakpoint: "md", collapsed: { desktop: false, mobile: true } }}
       padding="md"
     >
       <AppShell.Header>
@@ -91,7 +91,7 @@ export default function AppLayout({ children }: Props) {
           <Text pl="1rem">Logout</Text>
         </Button></div>
       </AppShell.Navbar>
-      <AppShell.Main>
+      <AppShell.Main style={{ width: "100%",  }}>
         { children }
       </AppShell.Main>
       <AppShell.Footer

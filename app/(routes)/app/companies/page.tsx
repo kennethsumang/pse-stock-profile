@@ -1,3 +1,5 @@
+import CompanyContainer from "@/app/_components/companies/CompanyContainer";
+
 export default function Page() {
-  return <h1>Company List</h1>;
+  return <CompanyContainer />;
 }

@@ -1,7 +1,14 @@
+import DataInitializerComponent from "@/app/_components/misc/DataInitializerComponent";
+
 /**
  * Page component
  * @author Kenneth Sumang
  */
 export default async function Page() {
-  return <h1>Home</h1>;
+  return (
+    <>
+      <DataInitializerComponent />
+      <h1>Home</h1>
+    </>
+  );
 }
