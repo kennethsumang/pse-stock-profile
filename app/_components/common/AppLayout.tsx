@@ -2,7 +2,7 @@
 
 import { AppShell, Burger, Button, Group, NavLink, Text, rem } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
-import { IconBrandMantine, IconBuilding, IconHome2, IconLogout } from "@tabler/icons-react";
+import { IconBrandMantine, IconBuilding, IconHome2, IconLogout, IconReceipt } from "@tabler/icons-react";
 import NavbarNewMenuButton from "./NavbarNewMenuButton";
 import { useRouter, usePathname } from "next/navigation";
 import RequestLibrary from "@/app/_libraries/request.library";
@@ -84,6 +84,13 @@ export default function AppLayout({ children }: Props) {
             label="Company List"
             leftSection={<IconBuilding size={20} />}
             onClick={(e) => handleNavClick(e, "/app/companies")}
+          />
+          <NavLink
+            active={pathname === "/app/records"}
+            href=""
+            label="Records"
+            leftSection={<IconReceipt size={20} />}
+            onClick={(e) => handleNavClick(e, "/app/records")}
           />
         </div></div><div>
         <Button color="red" fullWidth style={{ marginBottom: "auto" }} onClick={() => handleLogoutClick()}>
