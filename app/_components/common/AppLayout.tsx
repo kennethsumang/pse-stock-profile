@@ -86,11 +86,11 @@ export default function AppLayout({ children }: Props) {
             onClick={(e) => handleNavClick(e, "/app/companies")}
           />
           <NavLink
-            active={pathname === "/app/records"}
+            active={pathname === "/app/transactions"}
             href=""
-            label="Records"
+            label="Transactions"
             leftSection={<IconReceipt size={20} />}
-            onClick={(e) => handleNavClick(e, "/app/records")}
+            onClick={(e) => handleNavClick(e, "/app/transactions")}
           />
         </div></div><div>
         <Button color="red" fullWidth style={{ marginBottom: "auto" }} onClick={() => handleLogoutClick()}>
