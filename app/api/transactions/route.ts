@@ -1,5 +1,6 @@
 import { createClient } from "@/app/_utils/supabase/server";
 import { NextRequest, NextResponse } from "next/server";
+import { number, object, string } from "yup";
 
 /**
  * GET request handler
@@ -53,4 +54,26 @@ export async function GET(request: NextRequest, response: NextResponse) {
       total: recordsResponse.count,
     },
   );
+}
+
+/**
+ * POST request handler
+ * @author Kenneth Sumang
+ */
+export async function POST(request: NextRequest, response: NextResponse) {
+  const client = createClient();
+  const body = await request.json();
+  const validationSchema = object({
+    company_id: number().required(),
+    type: string().oneOf(["buy", "sell"]).required(),
+    price: number().required(),
+    quantity: number().required(),
+    tax_amount: number().required(),
+  });
+
+  try {
+    const validated = await validationSchema.validate(body, { strict: true });
+  } catch (e) {
+    console.log(e);
+  }
 }

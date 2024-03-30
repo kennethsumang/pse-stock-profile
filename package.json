@@ -27,6 +27,7 @@
     "react-dom": "^18",
     "react-toastify": "^10.0.4",
     "usehooks-ts": "^2.15.1",
+    "yup": "^1.4.0",
     "zustand": "^4.5.2"
   },
   "devDependencies": {

@@ -4,6 +4,8 @@ import { Button, Group, Modal, NumberInput, Radio } from "@mantine/core";
 import CompanySelector from "../companies/CompanySelector";
 import { useState } from "react";
 import { TransactionForm, TransactionType } from "@/app/_types/transactions";
+import { getCurrentDomain } from "@/app/_utils/http.library";
+import useToast from "@/app/_hooks/useToast";
 
 interface Props {
   open: boolean;
@@ -11,6 +13,7 @@ interface Props {
 }
 
 export default function AddTransactionModal(props: Props) {
+  const toast = useToast();
   const [form, setForm] = useState<TransactionForm>({
     company: null,
     quantity: 0,
@@ -19,13 +22,16 @@ export default function AddTransactionModal(props: Props) {
     type: 'buy'
   });
 
-  function handleSubmitTransactionForm() {
-    console.log(form);
+  async function handleSubmitTransactionForm() {
+    await fetch(`${getCurrentDomain()}/api/transactions`, { method: "POST" })
+      .then((response) => response.json())
+      .then((response) => console.log(response))
+      .catch((e) => toast("error", (e as Error).message));
   }
 
   return (
     <>
-      <Modal size="md" opened={props.open} onClose={() => props.onClose()} title="Add Buy Transaction" centered>
+      <Modal size="md" opened={props.open} onClose={() => props.onClose()} title="Add Transaction" centered>
         <div style={{ padding: "0.5rem", display: "flex", flexDirection: "column", rowGap: "0.5rem" }}>
           <Radio.Group
             name="transactionType"
