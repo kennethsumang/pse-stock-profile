@@ -12,18 +12,16 @@ import {
   IconCashBanknote,
 } from '@tabler/icons-react';
 import { useState } from 'react';
-import BuyTransactionModal from '../transactions/BuyTransactionModal';
-import SellTransactionModal from '../transactions/SellTransactionModal';
 import AddDividendModal from '../transactions/AddDividendModal';
+import AddTransactionModal from '../transactions/AddTransactionModal';
 
 export default function NavbarNewMenuButton() {
-  const [isBuyModalOpen, setIsBuyModalOpen] = useState<boolean>(false);
-  const [isSellModalOpen, setIsSellModalOpen] = useState<boolean>(false);
+  const [isTransactionModalOpen, setIsTransactionModalOpen] = useState<boolean>(false);
   const [isAddDividendModalOpen, setIsAddDividendModalOpen] = useState<boolean>(false);
 
   return (
     <>
-      <Menu shadow="md" width={200}>
+      <Menu shadow="md" width={250}>
         <Menu.Target>
           <Button fullWidth>
               <IconPlus size={20}  />
@@ -35,15 +33,9 @@ export default function NavbarNewMenuButton() {
           <Menu.Label>Stocks Transactions</Menu.Label>
           <Menu.Item
             leftSection={<IconCashBanknote style={{ width: rem(14), height: rem(14), color: "green" }} />}
-            onClick={() => setIsBuyModalOpen(true)}
+            onClick={() => setIsTransactionModalOpen(true)}
           >
-            Add Buy Record
-          </Menu.Item>
-          <Menu.Item
-            leftSection={<IconCashBanknote style={{ width: rem(14), height: rem(14), color: "red" }} />}
-            onClick={() => setIsSellModalOpen(true)}
-          >
-            Add Sell Record
+            Add Transaction Record
           </Menu.Item>
           
           <Menu.Label>Dividend Transactions</Menu.Label>
@@ -56,8 +48,7 @@ export default function NavbarNewMenuButton() {
         </Menu.Dropdown>
       </Menu>
 
-      <BuyTransactionModal open={isBuyModalOpen} onClose={() => setIsBuyModalOpen(false)} />
-      <SellTransactionModal open={isSellModalOpen} onClose={() => setIsSellModalOpen(false)} />
+      <AddTransactionModal open={isTransactionModalOpen} onClose={() => setIsTransactionModalOpen(false)} />
       <AddDividendModal open={isAddDividendModalOpen} onClose={() => setIsAddDividendModalOpen(false)} />
     </>
   );
