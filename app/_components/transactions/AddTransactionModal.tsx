@@ -6,6 +6,7 @@ import { useState } from "react";
 import { TransactionForm, TransactionType } from "@/app/_types/transactions";
 import { getCurrentDomain } from "@/app/_utils/http.library";
 import useToast from "@/app/_hooks/useToast";
+import _ from "lodash";
 
 interface Props {
   open: boolean;
@@ -23,9 +24,25 @@ export default function AddTransactionModal(props: Props) {
   });
 
   async function handleSubmitTransactionForm() {
-    await fetch(`${getCurrentDomain()}/api/transactions`, { method: "POST" })
+    const formData = _.omit(form, ["company"]);
+    if (!form.company) {
+      toast("error", "You must select a company first.");
+      return;
+    }
+
+    await fetch(
+      `${getCurrentDomain()}/api/transactions`,
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ ...formData, company_id: form.company.id }),
+      }
+    )
       .then((response) => response.json())
-      .then((response) => console.log(response))
+      .then((response) => {
+        console.log(response);
+        toast("success", "New transaction created.");
+      })
       .catch((e) => toast("error", (e as Error).message));
   }
 
@@ -50,7 +67,9 @@ export default function AddTransactionModal(props: Props) {
             <span style={{ fontWeight: 500, fontSize: "var(--input-label-size, var(--mantine-font-size-sm))" }}>
               Company
             </span>
-            <CompanySelector onSelect={(company) => setForm({ ...form, company })} />
+            <CompanySelector
+              onSelect={(company) => setForm({ ...form, company })}
+            />
           </div>
 
           <NumberInput

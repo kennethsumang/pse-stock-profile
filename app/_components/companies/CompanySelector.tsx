@@ -1,16 +1,18 @@
 "use client"
 
 import { useEffect, useMemo, useState } from 'react';
-import { Combobox, useCombobox, Text, Box, InputBase, Input } from '@mantine/core';
+import { Combobox, useCombobox, Text, Box, InputBase, Input, MantineStyleProp } from '@mantine/core';
 import { useCompanyStore } from '@/app/_store';
 import { Company } from '@/app/_types/companies';
 import _ from 'lodash';
+// import "./CompanySelector.module.css";
 
 interface Props {
   onSelect: (company: Company) => void;
+  optionStyle?: MantineStyleProp;
 }
 
-export default function CompanySelector({ onSelect }: Props) {
+export default function CompanySelector({ onSelect, optionStyle }: Props) {
   const companyList = useCompanyStore((store) => store.companies);
   const isFetching = useCompanyStore((store) => store.isFetching);
   const fetchAllCompanies = useCompanyStore((store) => store.fetchAllCompanies);
@@ -26,7 +28,11 @@ export default function CompanySelector({ onSelect }: Props) {
         return companyNameLowered.includes(searchLowered) || symbolLowered.includes(searchLowered);
       })
       .map((company: Company) => (
-        <Combobox.Option value={company.id.toString()} key={company.id}>
+        <Combobox.Option
+          value={company.id.toString()}
+          key={company.id}
+          style={optionStyle}
+        >
           {`${company.symbol} - ${company.company_name}`}
         </Combobox.Option>
       ));
@@ -71,6 +77,7 @@ export default function CompanySelector({ onSelect }: Props) {
     >
       <Combobox.Target>
         <InputBase
+          classNames={{ input: "company__input" }}
           component="button"
           type="button"
           pointer
