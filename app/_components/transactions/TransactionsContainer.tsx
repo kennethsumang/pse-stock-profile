@@ -105,7 +105,7 @@ export default function TransactionsContainer() {
   }
 
   return (
-    <div style={{ display: "flex", flexDirection: "column" }}>
+    <div style={{ display: "flex", flexDirection: "column", paddingTop: "1rem" }}>
       <div style={{ display: "flex", flexDirection: "row", justifyContent: "space-between" }}>
         <div style={{ width: "18rem" }}>
           <CompanySelector onSelect={(company) => setCompanyFilter(company)} addAllCompaniesOption={true} />
