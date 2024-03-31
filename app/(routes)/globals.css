@@ -4,3 +4,10 @@ body {
   height: 100vh;
   overflow-x: hidden;
 }
+
+/* this does not work on module-based CSS */
+.company__input {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
