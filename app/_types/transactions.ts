@@ -11,6 +11,10 @@ export interface Transaction {
   quantity: number;
   price: number;
   created_at: string;
+  companies: {
+    symbol: string;
+    company_name: string;
+  }
 }
 
 export interface TransactionResponse {

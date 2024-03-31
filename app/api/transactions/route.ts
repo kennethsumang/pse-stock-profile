@@ -30,7 +30,7 @@ export async function GET(request: NextRequest, response: NextResponse) {
   }
 
   const recordsResponse = await client.from("transactions")
-    .select("*", { count: "exact" })
+    .select("*,companies(symbol,company_name)", { count: "exact" })
     .eq("user_id", loggedInUserResponse.data.user.id)
     .order("id", { ascending: true })
     .range(offsetFrom, offsetTo);
