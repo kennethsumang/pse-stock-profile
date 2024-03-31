@@ -8,11 +8,11 @@ import _ from 'lodash';
 // import "./CompanySelector.module.css";
 
 interface Props {
-  onSelect: (company: Company) => void;
-  inputStyle?: MantineStyleProp;
+  onSelect: (company: Company|null) => void;
+  addAllCompaniesOption: boolean;
 }
 
-export default function CompanySelector({ onSelect, inputStyle }: Props) {
+export default function CompanySelector({ onSelect, addAllCompaniesOption }: Props) {
   const companyList = useCompanyStore((store) => store.companies);
   const isFetching = useCompanyStore((store) => store.isFetching);
   const fetchAllCompanies = useCompanyStore((store) => store.fetchAllCompanies);
@@ -65,6 +65,13 @@ export default function CompanySelector({ onSelect, inputStyle }: Props) {
     <Combobox
       store={combobox}
       onOptionSubmit={(id: string) => {
+        if (id.length === 0) {
+          setSelectedCompany(null);
+          onSelect(null);
+          combobox.closeDropdown();
+          return;
+        }
+
         const company = _.find(companyList, { id: Number(id) });
         if (!company) {
           return;
@@ -83,7 +90,6 @@ export default function CompanySelector({ onSelect, inputStyle }: Props) {
           rightSection={<Combobox.Chevron />}
           rightSectionPointerEvents="none"
           onClick={() => combobox.toggleDropdown()}
-          style={inputStyle}
         >
           {selectedCompanyLabel || <Input.Placeholder>Pick company</Input.Placeholder>}
         </InputBase>
@@ -96,6 +102,11 @@ export default function CompanySelector({ onSelect, inputStyle }: Props) {
           placeholder="Search companies"
         />
         <Combobox.Options style={{ height: "24rem", overflowY: "auto", overflowX: "hidden" }}>
+          {
+            addAllCompaniesOption
+              ? <Combobox.Option value={""}>( All companies )</Combobox.Option>
+              : <></>
+          }
           {options}
         </Combobox.Options>
       </Combobox.Dropdown>

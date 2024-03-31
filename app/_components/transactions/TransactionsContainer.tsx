@@ -72,6 +72,14 @@ export default function TransactionsContainer() {
       );
     }
 
+    if (transactions.length === 0) {
+      return (
+        <Table.Tr>
+          <Table.Td colSpan={7} style={{ textAlign: "center" }}>No results.</Table.Td>
+        </Table.Tr>
+      )
+    }
+
     return transactions.map((transaction: Transaction) => {
       return (
         <Table.Tr key={transaction.id}>
@@ -91,7 +99,7 @@ export default function TransactionsContainer() {
     <div style={{ display: "flex", flexDirection: "column" }}>
       <div style={{ display: "flex", flexDirection: "row", justifyContent: "space-between" }}>
         <div style={{ width: "18rem" }}>
-          <CompanySelector onSelect={(company) => setCompanyFilter(company)} />
+          <CompanySelector onSelect={(company) => setCompanyFilter(company)} addAllCompaniesOption={true} />
         </div>
         <div style={{ display: "flex", flexDirection: "row", columnGap: "1rem"}}>
           <DateTimePicker

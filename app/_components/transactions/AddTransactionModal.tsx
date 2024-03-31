@@ -9,6 +9,7 @@ import { TransactionForm, TransactionType } from "@/app/_types/transactions";
 import { getCurrentDomain } from "@/app/_utils/http.library";
 import useToast from "@/app/_hooks/useToast";
 import _ from "lodash";
+import { Company } from "@/app/_types/companies";
 
 interface Props {
   open: boolean;
@@ -81,7 +82,8 @@ export default function AddTransactionModal(props: Props) {
               Company
             </span>
             <CompanySelector
-              onSelect={(company) => setForm({ ...form, company })}
+              onSelect={(company) => setForm({ ...form, company: company as Company })}
+              addAllCompaniesOption={false}
             />
           </div>
 
