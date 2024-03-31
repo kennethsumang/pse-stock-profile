@@ -16,6 +16,11 @@ interface CompanyState {
   fetchAllCompanies: () => void;
 }
 
+interface TransactionStore {
+  key: number;
+  increment: () => void;
+}
+
 const useAuthStore = create<AuthState>((set) => ({
   user: null,
   loginUser: (user: AuthUser) => set(() => ({ user })),
@@ -43,7 +48,13 @@ const useCompanyStore = create<CompanyState>((set) => ({
   },
 }));
 
+const useTransactionStore = create<TransactionStore>((set) => ({
+  key: 0,
+  increment: () => set((state) => ({ key: state.key + 1 })),
+}))
+
 export {
   useAuthStore,
   useCompanyStore,
+  useTransactionStore,
 }

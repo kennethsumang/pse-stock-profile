@@ -10,6 +10,7 @@ import { getCurrentDomain } from "@/app/_utils/http.library";
 import useToast from "@/app/_hooks/useToast";
 import _ from "lodash";
 import { Company } from "@/app/_types/companies";
+import { useTransactionStore } from "@/app/_store";
 
 interface Props {
   open: boolean;
@@ -18,14 +19,16 @@ interface Props {
 
 export default function AddTransactionModal(props: Props) {
   const toast = useToast();
-  const [form, setForm] = useState<TransactionForm>({
+  const increment = useTransactionStore((state) => state.increment);
+  const initialState: TransactionForm = {
     company: null,
     quantity: 0,
     tax_amount: 0,
     price: 0,
     type: 'buy',
     transaction_timestamp: new Date(),
-  });
+  };
+  const [form, setForm] = useState<TransactionForm>({ ...initialState });
 
   async function handleSubmitTransactionForm() {
     const formData = _.omit(form, ["company", "transaction_timestamp"]);
@@ -48,8 +51,10 @@ export default function AddTransactionModal(props: Props) {
     )
       .then((response) => response.json())
       .then((response) => {
-        console.log(response);
         toast("success", "New transaction created.");
+        increment();
+        props.onClose();
+        setForm({ ...initialState });
       })
       .catch((e) => toast("error", (e as Error).message));
   }

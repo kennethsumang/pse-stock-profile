@@ -9,9 +9,11 @@ import { Combobox, Input, InputBase, Loader, Pagination, Table, useCombobox } fr
 import { DateTime } from "luxon";
 import CompanySelector from "../companies/CompanySelector";
 import { Company } from "@/app/_types/companies";
+import { useTransactionStore } from "@/app/_store";
 
 export default function TransactionsContainer() {
   const toast = useToast();
+  const transactionKey = useTransactionStore((state) => state.key);
   const [transactions, setTransactions] = useState<Transaction[]>([]);
   const [count, setCount] = useState<number>(0);
   const [limitPerPage, setLimitPerPage] = useState<number>(10);
@@ -34,7 +36,14 @@ export default function TransactionsContainer() {
   useEffect(() => {
     setCurrentPage(1);
     fetchTransactions();
-  }, [limitPerPage, companyFilter]);
+  }, [limitPerPage, companyFilter, dateFrom, dateTo]);
+
+  useEffect(() => {
+    setCompanyFilter(null);
+    setDateFrom(DateTime.now().minus({ month: 1 }).toJSDate());
+    setDateTo(DateTime.now().toJSDate());
+    fetchTransactions();
+  }, [transactionKey]);
 
   /**
    * Fetches transactions from API

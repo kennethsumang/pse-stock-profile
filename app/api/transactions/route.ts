@@ -68,7 +68,7 @@ export async function GET(request: NextRequest, response: NextResponse) {
   }
   
   const recordsResponse = await query
-    .order("id", { ascending: true })
+    .order("transaction_timestamp", { ascending: false })
     .range(offsetFrom, offsetTo);
   if (recordsResponse.error) {
     return Response
