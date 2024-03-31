@@ -78,10 +78,10 @@ export default function TransactionsContainer() {
           <Table.Td>{DateTime.fromISO(transaction.transaction_timestamp).toLocaleString()}</Table.Td>
           <Table.Td>{transaction.type.toUpperCase()}</Table.Td>
           <Table.Td>{transaction.companies.symbol}</Table.Td>
-          <Table.Td>{transaction.price}</Table.Td>
+          <Table.Td>{`₱ ${transaction.price}`}</Table.Td>
           <Table.Td>{transaction.quantity}</Table.Td>
-          <Table.Td>{transaction.tax_amount}</Table.Td>
-          <Table.Td>{(transaction.price * transaction.quantity) + transaction.tax_amount}</Table.Td>
+          <Table.Td>{`₱ ${transaction.tax_amount}`}</Table.Td>
+          <Table.Td>{`₱ ${(transaction.price * transaction.quantity) + transaction.tax_amount}`}</Table.Td>
         </Table.Tr>
       );
     });
