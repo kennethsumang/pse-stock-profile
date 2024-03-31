@@ -9,7 +9,6 @@ import { TransactionForm, TransactionType } from "@/app/_types/transactions";
 import { getCurrentDomain } from "@/app/_utils/http.library";
 import useToast from "@/app/_hooks/useToast";
 import _ from "lodash";
-import '@mantine/dates/styles.css';
 
 interface Props {
   open: boolean;

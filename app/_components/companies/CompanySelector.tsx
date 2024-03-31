@@ -9,10 +9,10 @@ import _ from 'lodash';
 
 interface Props {
   onSelect: (company: Company) => void;
-  optionStyle?: MantineStyleProp;
+  inputStyle?: MantineStyleProp;
 }
 
-export default function CompanySelector({ onSelect, optionStyle }: Props) {
+export default function CompanySelector({ onSelect, inputStyle }: Props) {
   const companyList = useCompanyStore((store) => store.companies);
   const isFetching = useCompanyStore((store) => store.isFetching);
   const fetchAllCompanies = useCompanyStore((store) => store.fetchAllCompanies);
@@ -31,7 +31,6 @@ export default function CompanySelector({ onSelect, optionStyle }: Props) {
         <Combobox.Option
           value={company.id.toString()}
           key={company.id}
-          style={optionStyle}
         >
           {`${company.symbol} - ${company.company_name}`}
         </Combobox.Option>
@@ -84,6 +83,7 @@ export default function CompanySelector({ onSelect, optionStyle }: Props) {
           rightSection={<Combobox.Chevron />}
           rightSectionPointerEvents="none"
           onClick={() => combobox.toggleDropdown()}
+          style={inputStyle}
         >
           {selectedCompanyLabel || <Input.Placeholder>Pick company</Input.Placeholder>}
         </InputBase>

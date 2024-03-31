@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import MantineProviderComponent from "../_components/providers/MantineProvider";
 import '@mantine/core/styles.css';
+import '@mantine/dates/styles.css';
 import './globals.css';
 import ToastProvider from "../_components/providers/ToastProvider";
 

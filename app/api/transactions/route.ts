@@ -15,7 +15,6 @@ export async function GET(request: NextRequest, response: NextResponse) {
   const symbol = searchParams.get("symbol");
   const dateFrom = searchParams.get("date-from");
   const dateTo = searchParams.get("date-to");
-  const tz = searchParams.get("tz");
 
   const offsetFrom = (page - 1) * limit;
   const offsetTo = offsetFrom + limit - 1;
@@ -36,14 +35,14 @@ export async function GET(request: NextRequest, response: NextResponse) {
   }
 
   let query = client.from("transactions")
-    .select("*,companies(symbol,company_name)", { count: "exact" })
+    .select("*,companies!inner(symbol,company_name)", { count: "exact" })
     .eq("user_id", loggedInUserResponse.data.user.id);
 
   if (symbol) {
-    query = query.eq("companies(symbol)", symbol);
+    query = query.eq("companies.symbol", symbol);
   }
 
-  if (dateFrom && dateTo && tz) {
+  if (dateFrom && dateTo) {
     // validate dates
     const dateFromObject = DateTime.fromISO(dateFrom); 
     const dateToObject = DateTime.fromISO(dateTo);

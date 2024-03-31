@@ -1,11 +1,14 @@
 "use client"
 
 import { useEffect, useMemo, useState } from "react";
+import { DateTimePicker } from '@mantine/dates';
 import { Transaction, TransactionResponse } from "@/app/_types/transactions";
 import { getCurrentDomain } from "@/app/_utils/http.library";
 import useToast from "@/app/_hooks/useToast";
-import { Loader, Pagination, Table } from "@mantine/core";
+import { Combobox, Input, InputBase, Loader, Pagination, Table, useCombobox } from "@mantine/core";
 import { DateTime } from "luxon";
+import CompanySelector from "../companies/CompanySelector";
+import { Company } from "@/app/_types/companies";
 
 export default function TransactionsContainer() {
   const toast = useToast();
@@ -13,7 +16,13 @@ export default function TransactionsContainer() {
   const [count, setCount] = useState<number>(0);
   const [limitPerPage, setLimitPerPage] = useState<number>(10);
   const [currentPage, setCurrentPage] = useState<number>(1);
+  const [companyFilter, setCompanyFilter] = useState<Company|null>(null);
+  const [dateFrom, setDateFrom] = useState<Date>(DateTime.now().minus({ month: 1 }).toJSDate());
+  const [dateTo, setDateTo] = useState<Date>(DateTime.now().toJSDate());
   const [isLoading, setIsLoading] = useState<boolean>(false);
+  const combobox = useCombobox({
+    onDropdownClose: () => combobox.resetSelectedOption(),
+  });
   const totalPages = useMemo(() => {
     return Math.ceil(count/limitPerPage);
   }, [count, limitPerPage]);
@@ -25,14 +34,24 @@ export default function TransactionsContainer() {
   useEffect(() => {
     setCurrentPage(1);
     fetchTransactions();
-  }, [limitPerPage]);
+  }, [limitPerPage, companyFilter]);
 
+  /**
+   * Fetches transactions from API
+   */
   function fetchTransactions() {
     setIsLoading(true);
     
     const url = new URL(`${getCurrentDomain()}/api/transactions`);
     url.searchParams.append("page", currentPage.toString());
     url.searchParams.append("limit", limitPerPage.toString());
+    url.searchParams.append("date-from", DateTime.fromJSDate(dateFrom).toISO()!);
+    url.searchParams.append("date-to", DateTime.fromJSDate(dateTo).toISO()!);
+
+    if (companyFilter) {
+      url.searchParams.append("symbol", companyFilter.symbol);
+    }
+
     fetch(url.toString(), { method: "GET" })
       .then((response) => response.json())
       .then((response: TransactionResponse) => {
@@ -69,14 +88,56 @@ export default function TransactionsContainer() {
   }
 
   return (
-    <>
-      {/* <Input
-        style={{ width: "20rem", paddingTop: "1rem", paddingBottom: "0.75rem" }}
-        type="text"
-        placeholder="Type here to filter companies..."
-        value={filterText}
-        onChange={(e) => setFilterText(e.target.value)}
-      /> */}
+    <div style={{ display: "flex", flexDirection: "column" }}>
+      <div style={{ display: "flex", flexDirection: "row", justifyContent: "space-between" }}>
+        <div style={{ width: "18rem" }}>
+          <CompanySelector onSelect={(company) => setCompanyFilter(company)} />
+        </div>
+        <div style={{ display: "flex", flexDirection: "row", columnGap: "1rem"}}>
+          <DateTimePicker
+            placeholder="Date From"
+            style={{ width: "12rem" }}
+            value={dateFrom}
+            onChange={(val) => setDateFrom(val as Date)}
+          />
+          <DateTimePicker
+            placeholder="Date To"
+            style={{ width: "12rem" }}
+            value={dateTo}
+            onChange={(val) => setDateTo(val as Date)}
+          />
+          <Combobox
+            store={combobox}
+            onOptionSubmit={(val) => {
+              setLimitPerPage(Number(val));
+              combobox.closeDropdown();
+            }}
+          >
+            <Combobox.Target>
+              <InputBase
+                component="button"
+                type="button"
+                pointer
+                rightSection={<Combobox.Chevron />}
+                rightSectionPointerEvents="none"
+                onClick={() => combobox.toggleDropdown()}
+                style={{ width: "8rem" }}
+              >
+                {`${limitPerPage} items` || <Input.Placeholder>Limit</Input.Placeholder>}
+              </InputBase>
+            </Combobox.Target>
+
+            <Combobox.Dropdown>
+              <Combobox.Options>
+                <Combobox.Option value="1">1 item</Combobox.Option>
+                <Combobox.Option value="10">10 items</Combobox.Option>
+                <Combobox.Option value="25">25 items</Combobox.Option>
+                <Combobox.Option value="50">50 items</Combobox.Option>
+              </Combobox.Options>
+            </Combobox.Dropdown>
+          </Combobox>
+        </div>
+      </div>
       <Table>
         <Table.Thead>
           <Table.Tr>
@@ -100,6 +161,6 @@ export default function TransactionsContainer() {
         value={currentPage}
         onChange={setCurrentPage}
       />
-    </>
+    </div>
   )
 }
