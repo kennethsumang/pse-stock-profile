@@ -11,6 +11,7 @@ export interface Transaction {
   quantity: number;
   price: number;
   created_at: string;
+  transaction_timestamp: string;
   companies: {
     symbol: string;
     company_name: string;
@@ -28,4 +29,5 @@ export interface TransactionForm {
   company: Company|null;
   quantity: number;
   price: number;
+  transaction_timestamp: Date;
 }

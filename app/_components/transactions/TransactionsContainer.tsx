@@ -5,6 +5,7 @@ import { Transaction, TransactionResponse } from "@/app/_types/transactions";
 import { getCurrentDomain } from "@/app/_utils/http.library";
 import useToast from "@/app/_hooks/useToast";
 import { Loader, Pagination, Table } from "@mantine/core";
+import { DateTime } from "luxon";
 
 export default function TransactionsContainer() {
   const toast = useToast();
@@ -18,15 +19,30 @@ export default function TransactionsContainer() {
   }, [count, limitPerPage]);
 
   useEffect(() => {
-    fetch(`${getCurrentDomain()}/api/transactions`, { method: "GET" })
+    fetchTransactions();
+  }, [currentPage]);
+
+  useEffect(() => {
+    setCurrentPage(1);
+    fetchTransactions();
+  }, [limitPerPage]);
+
+  function fetchTransactions() {
+    setIsLoading(true);
+    
+    const url = new URL(`${getCurrentDomain()}/api/transactions`);
+    url.searchParams.append("page", currentPage.toString());
+    url.searchParams.append("limit", limitPerPage.toString());
+    fetch(url.toString(), { method: "GET" })
       .then((response) => response.json())
       .then((response: TransactionResponse) => {
         setTransactions(response.data);
         setCount(response.total);
         console.log(response);
       })
-      .catch((e) => toast("error", (e as Error).message));
-  }, []);
+      .catch((e) => toast("error", (e as Error).message))
+      .finally(() => setIsLoading(false));
+  }
 
   function renderTableItems(): React.ReactNode {
     if (isLoading) {
@@ -40,6 +56,7 @@ export default function TransactionsContainer() {
     return transactions.map((transaction: Transaction) => {
       return (
         <Table.Tr key={transaction.id}>
+          <Table.Td>{DateTime.fromISO(transaction.transaction_timestamp).toLocaleString()}</Table.Td>
           <Table.Td>{transaction.type.toUpperCase()}</Table.Td>
           <Table.Td>{transaction.companies.symbol}</Table.Td>
           <Table.Td>{transaction.price}</Table.Td>
@@ -63,6 +80,7 @@ export default function TransactionsContainer() {
       <Table>
         <Table.Thead>
           <Table.Tr>
+            <Table.Th>Date</Table.Th>
             <Table.Th>Type</Table.Th>
             <Table.Th>Symbol</Table.Th>
             <Table.Th>Price</Table.Th>

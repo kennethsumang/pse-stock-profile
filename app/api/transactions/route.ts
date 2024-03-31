@@ -1,6 +1,7 @@
 import { createClient } from "@/app/_utils/supabase/server";
 import { NextRequest, NextResponse } from "next/server";
 import { ValidationError, number, object, string } from "yup";
+import { DateTime } from "luxon";
 
 /**
  * GET request handler
@@ -11,6 +12,11 @@ export async function GET(request: NextRequest, response: NextResponse) {
   const searchParams = request.nextUrl.searchParams;
   const page = Number(searchParams.get("page")) || 1;
   const limit = Number(searchParams.get("limit")) || 10;
+  const symbol = searchParams.get("symbol");
+  const dateFrom = searchParams.get("date-from");
+  const dateTo = searchParams.get("date-to");
+  const tz = searchParams.get("tz");
+
   const offsetFrom = (page - 1) * limit;
   const offsetTo = offsetFrom + limit - 1;
 
@@ -29,12 +35,42 @@ export async function GET(request: NextRequest, response: NextResponse) {
       });
   }
 
-  const recordsResponse = await client.from("transactions")
+  let query = client.from("transactions")
     .select("*,companies(symbol,company_name)", { count: "exact" })
-    .eq("user_id", loggedInUserResponse.data.user.id)
+    .eq("user_id", loggedInUserResponse.data.user.id);
+
+  if (symbol) {
+    query = query.eq("companies(symbol)", symbol);
+  }
+
+  if (dateFrom && dateTo && tz) {
+    // validate dates
+    const dateFromObject = DateTime.fromISO(dateFrom); 
+    const dateToObject = DateTime.fromISO(dateTo);
+    if (!dateFromObject.isValid || !dateToObject.isValid) {
+      return Response
+        .json({
+          error: {
+            code: 400,
+            message: "Invalid date params."
+          },
+        }, {
+          status: 400,
+          statusText: 'Failed fetching of records.'
+        });
+    }
+
+    const utcDateFrom = dateFromObject.setZone("utc").toISO();
+    const utcDateTo = dateToObject.setZone("utc").toISO();
+
+    query = query
+      .gte("transaction_timestamp", utcDateFrom)
+      .lte("transaction_timestamp", utcDateTo);
+  }
+  
+  const recordsResponse = await query
     .order("id", { ascending: true })
     .range(offsetFrom, offsetTo);
-  
   if (recordsResponse.error) {
     return Response
       .json({
