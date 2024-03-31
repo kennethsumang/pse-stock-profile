@@ -100,6 +100,7 @@ export default function TransactionsContainer() {
             value={dateFrom}
             onChange={(val) => setDateFrom(val as Date)}
           />
+          <span style={{ marginTop: "0.3rem" }}>&nbsp;~&nbsp;</span>
           <DateTimePicker
             placeholder="Date To"
             style={{ width: "12rem" }}
