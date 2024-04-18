@@ -1,8 +1,23 @@
 "use client";
 
-import { AppShell, Burger, Button, Group, NavLink, Text, rem } from "@mantine/core";
+import {
+  AppShell,
+  Burger,
+  Button,
+  Group,
+  NavLink,
+  Text,
+  rem,
+} from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
-import { IconBrandMantine, IconBuilding, IconHome2, IconLogout, IconReceipt } from "@tabler/icons-react";
+import {
+  IconBrandMantine,
+  IconBuilding,
+  IconCashBanknote,
+  IconHome2,
+  IconLogout,
+  IconReceipt,
+} from "@tabler/icons-react";
 import NavbarNewMenuButton from "./NavbarNewMenuButton";
 import { useRouter, usePathname } from "next/navigation";
 import RequestLibrary from "@/app/_libraries/request.library";
@@ -14,7 +29,7 @@ import { useAuthStore } from "@/app/_store";
 interface Props {
   children: React.ReactNode;
 }
-  
+
 export default function AppLayout({ children }: Props) {
   const router = useRouter();
   const pathname = usePathname();
@@ -22,7 +37,7 @@ export default function AppLayout({ children }: Props) {
   const auth = useAuthStore((state) => state);
   const [opened, { toggle }] = useDisclosure();
 
-  function handleNavClick(e: React.MouseEvent ,href: string) {
+  function handleNavClick(e: React.MouseEvent, href: string) {
     e.preventDefault();
     router.push(href);
   }
@@ -43,7 +58,7 @@ export default function AppLayout({ children }: Props) {
     try {
       const response = await RequestLibrary.request<{ data: string }>(
         `${getCurrentDomain()}/api/auth/logout`,
-        { method: 'POST' },
+        { method: "POST" },
       );
 
       return true;
@@ -67,40 +82,60 @@ export default function AppLayout({ children }: Props) {
           <Text size="lg">PSE Stock Profile</Text>
         </Group>
       </AppShell.Header>
-      <AppShell.Navbar p="md" style={{display: "flex", flexDirection: "column", justifyContent: "space-between"}}>
+      <AppShell.Navbar
+        p="md"
+        style={{
+          display: "flex",
+          flexDirection: "column",
+          justifyContent: "space-between",
+        }}
+      >
         <div>
-        <NavbarNewMenuButton />
-        <div style={{ marginTop: rem(20) }}>
-          <NavLink
-            active={pathname === "/app"}
-            href=""
-            label="Home"
-            leftSection={<IconHome2 size={20} />}
-            onClick={(e) => handleNavClick(e, "/app")}
-          />
-          <NavLink
-            active={pathname === "/app/companies"}
-            href=""
-            label="Company List"
-            leftSection={<IconBuilding size={20} />}
-            onClick={(e) => handleNavClick(e, "/app/companies")}
-          />
-          <NavLink
-            active={pathname === "/app/transactions"}
-            href=""
-            label="Transactions"
-            leftSection={<IconReceipt size={20} />}
-            onClick={(e) => handleNavClick(e, "/app/transactions")}
-          />
-        </div></div><div>
-        <Button color="red" fullWidth style={{ marginBottom: "auto" }} onClick={() => handleLogoutClick()}>
-          <IconLogout size={20}  />
-          <Text pl="1rem">Logout</Text>
-        </Button></div>
+          <NavbarNewMenuButton />
+          <div style={{ marginTop: rem(20) }}>
+            <NavLink
+              active={pathname === "/app"}
+              href=""
+              label="Home"
+              leftSection={<IconHome2 size={20} />}
+              onClick={(e) => handleNavClick(e, "/app")}
+            />
+            <NavLink
+              active={pathname === "/app/companies"}
+              href=""
+              label="Company List"
+              leftSection={<IconBuilding size={20} />}
+              onClick={(e) => handleNavClick(e, "/app/companies")}
+            />
+            <NavLink
+              active={pathname === "/app/transactions"}
+              href=""
+              label="Transactions"
+              leftSection={<IconReceipt size={20} />}
+              onClick={(e) => handleNavClick(e, "/app/transactions")}
+            />
+            <NavLink
+              active={pathname === "/app/dividends"}
+              href=""
+              label="Dividends"
+              leftSection={<IconCashBanknote size={20} />}
+              onClick={(e) => handleNavClick(e, "/app/dividends")}
+            />
+          </div>
+        </div>
+        <div>
+          <Button
+            color="red"
+            fullWidth
+            style={{ marginBottom: "auto" }}
+            onClick={() => handleLogoutClick()}
+          >
+            <IconLogout size={20} />
+            <Text pl="1rem">Logout</Text>
+          </Button>
+        </div>
       </AppShell.Navbar>
-      <AppShell.Main style={{ width: "100%",  }}>
-        { children }
-      </AppShell.Main>
+      <AppShell.Main style={{ width: "100%" }}>{children}</AppShell.Main>
       <AppShell.Footer
         p="sm"
         style={{
@@ -108,11 +143,16 @@ export default function AppLayout({ children }: Props) {
           flexDirection: "column",
           width: "100%",
           alignItems: "center",
-          paddingBottom: "1rem"
+          paddingBottom: "1rem",
         }}
       >
-        <span>{ `© Kenneth Sumang, ${new Date().getFullYear()}` }</span>
-        <span>Made with ❤️ using <Link href="https://mantine.dev/" target="_blank">Mantine</Link></span>
+        <span>{`© Kenneth Sumang, ${new Date().getFullYear()}`}</span>
+        <span>
+          Made with ❤️ using{" "}
+          <Link href="https://mantine.dev/" target="_blank">
+            Mantine
+          </Link>
+        </span>
       </AppShell.Footer>
     </AppShell>
   );
