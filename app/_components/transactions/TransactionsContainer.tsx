@@ -1,11 +1,20 @@
-"use client"
+"use client";
 
 import { useEffect, useMemo, useState } from "react";
-import { DateTimePicker } from '@mantine/dates';
+import { DateTimePicker } from "@mantine/dates";
 import { Transaction, TransactionResponse } from "@/app/_types/transactions";
 import { getCurrentDomain } from "@/app/_utils/http.library";
 import useToast from "@/app/_hooks/useToast";
-import { Combobox, Input, InputBase, Loader, Pagination, Table, useCombobox } from "@mantine/core";
+import {
+  Combobox,
+  Input,
+  InputBase,
+  Loader,
+  Pagination,
+  ScrollArea,
+  Table,
+  useCombobox,
+} from "@mantine/core";
 import { DateTime } from "luxon";
 import CompanySelector from "../companies/CompanySelector";
 import { Company } from "@/app/_types/companies";
@@ -18,15 +27,17 @@ export default function TransactionsContainer() {
   const [count, setCount] = useState<number>(0);
   const [limitPerPage, setLimitPerPage] = useState<number>(10);
   const [currentPage, setCurrentPage] = useState<number>(1);
-  const [companyFilter, setCompanyFilter] = useState<Company|null>(null);
-  const [dateFrom, setDateFrom] = useState<Date>(DateTime.now().minus({ month: 1 }).toJSDate());
+  const [companyFilter, setCompanyFilter] = useState<Company | null>(null);
+  const [dateFrom, setDateFrom] = useState<Date>(
+    DateTime.now().minus({ month: 1 }).toJSDate(),
+  );
   const [dateTo, setDateTo] = useState<Date>(DateTime.now().toJSDate());
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const combobox = useCombobox({
     onDropdownClose: () => combobox.resetSelectedOption(),
   });
   const totalPages = useMemo(() => {
-    return Math.ceil(count/limitPerPage);
+    return Math.ceil(count / limitPerPage);
   }, [count, limitPerPage]);
 
   useEffect(() => {
@@ -50,11 +61,14 @@ export default function TransactionsContainer() {
    */
   function fetchTransactions() {
     setIsLoading(true);
-    
+
     const url = new URL(`${getCurrentDomain()}/api/transactions`);
     url.searchParams.append("page", currentPage.toString());
     url.searchParams.append("limit", limitPerPage.toString());
-    url.searchParams.append("date-from", DateTime.fromJSDate(dateFrom).toISO()!);
+    url.searchParams.append(
+      "date-from",
+      DateTime.fromJSDate(dateFrom).toISO()!,
+    );
     url.searchParams.append("date-to", DateTime.fromJSDate(dateTo).toISO()!);
 
     if (companyFilter) {
@@ -75,7 +89,9 @@ export default function TransactionsContainer() {
   function renderTableItems(): React.ReactNode {
     if (isLoading) {
       return (
-        <div style={{ width: "100%", display: "flex", justifyContent: "center" }}>
+        <div
+          style={{ width: "100%", display: "flex", justifyContent: "center" }}
+        >
           <Loader color="blue" />
         </div>
       );
@@ -84,33 +100,52 @@ export default function TransactionsContainer() {
     if (transactions.length === 0) {
       return (
         <Table.Tr>
-          <Table.Td colSpan={7} style={{ textAlign: "center" }}>No results.</Table.Td>
+          <Table.Td colSpan={7} style={{ textAlign: "center" }}>
+            No results.
+          </Table.Td>
         </Table.Tr>
-      )
+      );
     }
 
     return transactions.map((transaction: Transaction) => {
       return (
         <Table.Tr key={transaction.id}>
-          <Table.Td>{DateTime.fromISO(transaction.transaction_timestamp).toLocaleString()}</Table.Td>
+          <Table.Td>
+            {DateTime.fromISO(
+              transaction.transaction_timestamp,
+            ).toLocaleString()}
+          </Table.Td>
           <Table.Td>{transaction.type.toUpperCase()}</Table.Td>
           <Table.Td>{transaction.companies.symbol}</Table.Td>
           <Table.Td>{`₱ ${transaction.price}`}</Table.Td>
           <Table.Td>{transaction.quantity}</Table.Td>
           <Table.Td>{`₱ ${transaction.tax_amount}`}</Table.Td>
-          <Table.Td>{`₱ ${(transaction.price * transaction.quantity) + transaction.tax_amount}`}</Table.Td>
+          <Table.Td>{`₱ ${transaction.price * transaction.quantity + transaction.tax_amount}`}</Table.Td>
         </Table.Tr>
       );
     });
   }
 
   return (
-    <div style={{ display: "flex", flexDirection: "column", paddingTop: "1rem" }}>
-      <div style={{ display: "flex", flexDirection: "row", justifyContent: "space-between" }}>
+    <div
+      style={{ display: "flex", flexDirection: "column", paddingTop: "1rem" }}
+    >
+      <div
+        style={{
+          display: "flex",
+          flexDirection: "row",
+          justifyContent: "space-between",
+        }}
+      >
         <div style={{ width: "18rem" }}>
-          <CompanySelector onSelect={(company) => setCompanyFilter(company)} addAllCompaniesOption={true} />
+          <CompanySelector
+            onSelect={(company) => setCompanyFilter(company)}
+            addAllCompaniesOption={true}
+          />
         </div>
-        <div style={{ display: "flex", flexDirection: "row", columnGap: "1rem"}}>
+        <div
+          style={{ display: "flex", flexDirection: "row", columnGap: "1rem" }}
+        >
           <DateTimePicker
             placeholder="Date From"
             style={{ width: "12rem" }}
@@ -141,7 +176,9 @@ export default function TransactionsContainer() {
                 onClick={() => combobox.toggleDropdown()}
                 style={{ width: "8rem" }}
               >
-                {`${limitPerPage} items` || <Input.Placeholder>Limit</Input.Placeholder>}
+                {`${limitPerPage} items` || (
+                  <Input.Placeholder>Limit</Input.Placeholder>
+                )}
               </InputBase>
             </Combobox.Target>
 
@@ -156,29 +193,33 @@ export default function TransactionsContainer() {
           </Combobox>
         </div>
       </div>
-      <Table>
-        <Table.Thead>
-          <Table.Tr>
-            <Table.Th>Date</Table.Th>
-            <Table.Th>Type</Table.Th>
-            <Table.Th>Symbol</Table.Th>
-            <Table.Th>Price</Table.Th>
-            <Table.Th>Quantity</Table.Th>
-            <Table.Th>Tax Amount</Table.Th>
-            <Table.Th>Total</Table.Th>
-          </Table.Tr>
-        </Table.Thead>
+      <ScrollArea w="100%">
+        <Table>
+          <Table.Thead>
+            <Table.Tr>
+              <Table.Th>Date</Table.Th>
+              <Table.Th>Type</Table.Th>
+              <Table.Th>Symbol</Table.Th>
+              <Table.Th>Price</Table.Th>
+              <Table.Th>Quantity</Table.Th>
+              <Table.Th>Tax Amount</Table.Th>
+              <Table.Th>Total</Table.Th>
+            </Table.Tr>
+          </Table.Thead>
 
-        <Table.Tbody>
-          {renderTableItems()}
-        </Table.Tbody>
-      </Table>
+          <Table.Tbody>{renderTableItems()}</Table.Tbody>
+        </Table>
+      </ScrollArea>
       <Pagination
-        style={{ paddingTop: "1rem", display: "flex", justifyContent: "center" }}
+        style={{
+          paddingTop: "1rem",
+          display: "flex",
+          justifyContent: "center",
+        }}
         total={totalPages}
         value={currentPage}
         onChange={setCurrentPage}
       />
     </div>
-  )
+  );
 }
