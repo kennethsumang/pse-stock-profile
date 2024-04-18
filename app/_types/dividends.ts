@@ -1,3 +1,5 @@
+import { Company } from "./companies";
+
 export interface Dividend {
   id: number;
   user_id: string; // uuid
@@ -16,4 +18,12 @@ export interface Dividend {
 export interface DividendResponse {
   data: Dividend[];
   total: number;
+}
+
+export interface DividendForm {
+  tax_amount: number;
+  company: Company | null;
+  no_of_shares: number;
+  amount_per_share: number;
+  dividend_timestamp: Date;
 }
