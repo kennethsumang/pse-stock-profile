@@ -6,6 +6,11 @@ export interface Dividend {
   amount_per_share: number;
   tax_amount: number;
   created_at: string;
+  dividend_timestamp: string;
+  companies: {
+    symbol: string;
+    company_name: string;
+  };
 }
 
 export interface DividendResponse {

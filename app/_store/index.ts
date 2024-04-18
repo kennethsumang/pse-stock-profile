@@ -1,10 +1,10 @@
-import { create } from 'zustand';
-import { AuthUser } from '../_types/auth';
-import { Company, GetCompanyResponse } from '../_types/companies';
-import { getCurrentDomain } from '../_utils/http.library';
+import { create } from "zustand";
+import { AuthUser } from "../_types/auth";
+import { Company, GetCompanyResponse } from "../_types/companies";
+import { getCurrentDomain } from "../_utils/http.library";
 
 interface AuthState {
-  user: AuthUser|null;
+  user: AuthUser | null;
   loginUser: (user: AuthUser) => void;
   logoutUser: () => void;
 }
@@ -21,10 +21,15 @@ interface TransactionStore {
   increment: () => void;
 }
 
+interface DividendStore {
+  key: number;
+  increment: () => void;
+}
+
 const useAuthStore = create<AuthState>((set) => ({
   user: null,
   loginUser: (user: AuthUser) => set(() => ({ user })),
-  logoutUser: () => set(() => ({ user: null }))
+  logoutUser: () => set(() => ({ user: null })),
 }));
 
 const useCompanyStore = create<CompanyState>((set) => ({
@@ -37,7 +42,7 @@ const useCompanyStore = create<CompanyState>((set) => ({
       const url = new URL(`${getCurrentDomain()}/api/companies`);
       url.searchParams.append("limit", "1000"); // fetch all companies
       const response = await fetch(url.toString(), { method: "GET" });
-      const data = await response.json() as GetCompanyResponse;
+      const data = (await response.json()) as GetCompanyResponse;
       set({ companies: data.data });
       set({ count: data.total });
       set({ isFetching: false });
@@ -51,10 +56,11 @@ const useCompanyStore = create<CompanyState>((set) => ({
 const useTransactionStore = create<TransactionStore>((set) => ({
   key: 0,
   increment: () => set((state) => ({ key: state.key + 1 })),
-}))
+}));
 
-export {
-  useAuthStore,
-  useCompanyStore,
-  useTransactionStore,
-}
+const useDividendStore = create<DividendStore>((set) => ({
+  key: 0,
+  increment: () => set((state) => ({ key: state.key + 1 })),
+}));
+
+export { useAuthStore, useCompanyStore, useTransactionStore, useDividendStore };
