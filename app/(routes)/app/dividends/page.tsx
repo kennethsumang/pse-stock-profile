@@ -1,3 +1,5 @@
+import DividendsContainer from "@/app/_components/dividends/DividendsContainer";
+
 export default function Page() {
-  return <h1>Dividends Page</h1>;
+  return <DividendsContainer />;
 }
