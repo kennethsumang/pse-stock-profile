@@ -1,6 +1,6 @@
 "use client";
 
-import { Button, Group, Modal, NumberInput, Radio } from "@mantine/core";
+import { Button, Modal, NumberInput } from "@mantine/core";
 import { DateTimePicker } from "@mantine/dates";
 import { DateTime } from "luxon";
 import CompanySelector from "../companies/CompanySelector";
@@ -29,8 +29,8 @@ export default function AddDividendModal(props: Props) {
   };
   const [form, setForm] = useState<DividendForm>({ ...initialState });
 
-  async function handleSubmitTransactionForm() {
-    const formData = _.omit(form, ["company", "transaction_timestamp"]);
+  async function handleSubmitDividendForm() {
+    const formData = _.omit(form, ["company", "dividend_timestamp"]);
     if (!form.company) {
       toast("error", "You must select a company first.");
       return;
@@ -42,12 +42,12 @@ export default function AddDividendModal(props: Props) {
       body: JSON.stringify({
         ...formData,
         company_id: form.company.id,
-        transaction_timestamp: DateTime.fromJSDate(form.dividend_timestamp),
+        dividend_timestamp: DateTime.fromJSDate(form.dividend_timestamp),
       }),
     })
       .then((response) => response.json())
       .then((response) => {
-        toast("success", "New transaction created.");
+        toast("success", "New dividend record created.");
         increment();
         props.onClose();
         setForm({ ...initialState });
@@ -61,7 +61,7 @@ export default function AddDividendModal(props: Props) {
         size="md"
         opened={props.open}
         onClose={() => props.onClose()}
-        title="Add Transaction"
+        title="Add Dividend Record"
         centered
       >
         <div
@@ -137,9 +137,7 @@ export default function AddDividendModal(props: Props) {
               marginTop: "1rem",
             }}
           >
-            <Button onClick={() => handleSubmitTransactionForm()}>
-              Submit
-            </Button>
+            <Button onClick={() => handleSubmitDividendForm()}>Submit</Button>
           </div>
         </div>
       </Modal>

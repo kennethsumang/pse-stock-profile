@@ -1,6 +1,6 @@
 import { createClient } from "@/app/_utils/supabase/server";
 import { NextRequest, NextResponse } from "next/server";
-// import { ValidationError, number, object, string } from "yup";
+import { ValidationError, number, object, string } from "yup";
 import { DateTime } from "luxon";
 
 /**
@@ -94,4 +94,87 @@ export async function GET(request: NextRequest, response: NextResponse) {
     data: recordsResponse.data,
     total: recordsResponse.count,
   });
+}
+
+/**
+ * POST request handler
+ * @author Kenneth Sumang
+ */
+export async function POST(request: NextRequest, response: NextResponse) {
+  const client = createClient();
+  const body = await request.json();
+  const validationSchema = object({
+    company_id: number().required(),
+    amount_per_share: number().required(),
+    no_of_shares: number().required(),
+    tax_amount: number().required(),
+  });
+
+  const loggedInUserResponse = await client.auth.getUser();
+  if (loggedInUserResponse.error) {
+    return Response.json(
+      {
+        error: {
+          code: 401,
+          message: loggedInUserResponse.error.message,
+        },
+      },
+      {
+        status: 401,
+        statusText: "Failed creating new transaction.",
+      },
+    );
+  }
+
+  try {
+    const validated = await validationSchema.validate(body, { strict: true });
+    const insertResponse = await client
+      .from("dividends")
+      .insert({ ...validated, user_id: loggedInUserResponse.data.user.id });
+
+    if (insertResponse.error) {
+      return Response.json(
+        {
+          error: {
+            code: 500,
+            message: insertResponse.error.message,
+          },
+        },
+        {
+          status: 500,
+          statusText: "Failed creating new dividend record.",
+        },
+      );
+    }
+
+    return Response.json({ data: insertResponse.data });
+  } catch (e) {
+    if (e instanceof ValidationError) {
+      return Response.json(
+        {
+          error: {
+            code: 400,
+            message: (e as ValidationError).errors[0],
+          },
+        },
+        {
+          status: 400,
+          statusText: "Some of the data is invalid.",
+        },
+      );
+    }
+
+    return Response.json(
+      {
+        error: {
+          code: 500,
+          message: (e as Error).message,
+        },
+      },
+      {
+        status: 400,
+        statusText: "An unexpected error has occurred.",
+      },
+    );
+  }
 }
