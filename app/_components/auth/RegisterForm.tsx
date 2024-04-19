@@ -29,11 +29,13 @@ export default function RegisterForm() {
     validate: {
       first_name: (value: string) => {
         const trimmed = value.trim();
-        return trimmed.length >= 2 && trimmed.length <= 20;
+        const isValid = trimmed.length >= 2 && trimmed.length <= 20;
+        return isValid ? null : "Invalid First Name.";
       },
       last_name: (value: string) => {
         const trimmed = value.trim();
-        return trimmed.length >= 2 && trimmed.length <= 20;
+        const isValid = trimmed.length >= 2 && trimmed.length <= 20;
+        return isValid ? null : "Invalid Last Name.";
       },
       email: (value: string) => {
         // SOURCE: https://stackoverflow.com/a/46181
