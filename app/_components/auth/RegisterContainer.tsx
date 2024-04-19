@@ -1,14 +1,14 @@
 "use client";
 
 import { Paper, Text } from "@mantine/core";
-import LoginForm from "./LoginForm";
 import Link from "next/link";
+import RegisterForm from "./RegisterForm";
 
 /**
- * LoginContainer component
+ * RegisterContainer component
  * @author Kenneth Sumang
  */
-export default function LoginContainer() {
+export default function RegisterContainer() {
   return (
     <Paper
       withBorder
@@ -28,11 +28,11 @@ export default function LoginContainer() {
         variant="text"
         size="xl"
       >
-        Login
+        Register
       </Text>
-      <LoginForm />
+      <RegisterForm />
       <Text pt="1rem">
-        No account yet? <Link href="/auth/register">Sign up</Link>.
+        Already have an account? <Link href="/">Log in</Link>.
       </Text>
     </Paper>
   );

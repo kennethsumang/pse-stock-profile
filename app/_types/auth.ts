@@ -6,3 +6,10 @@ export interface AuthUser {
   role: string;
   user_id: string;
 }
+
+export interface RegisterForm {
+  first_name: string;
+  last_name: string;
+  email: string;
+  password: string;
+}
