@@ -31,9 +31,9 @@ export default function LoginContainer() {
         Login
       </Text>
       <LoginForm />
-      <Text pt="1rem">
+      {/* <Text pt="1rem">
         No account yet? <Link href="/auth/register">Sign up</Link>.
-      </Text>
+      </Text> */}
     </Paper>
   );
 }

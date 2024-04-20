@@ -17,7 +17,8 @@ export default async function Page() {
 
   return (
     <div className={classes.container}>
-      <RegisterContainer />
+      {/* <RegisterContainer /> */}
+      <h1>It is not yet possible to register for the mean time.</h1>
     </div>
   );
 }
