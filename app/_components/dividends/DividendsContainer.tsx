@@ -117,7 +117,7 @@ export default function DividendsContainer() {
           <Table.Td>{`₱ ${dividend.amount_per_share}`}</Table.Td>
           <Table.Td>{dividend.no_of_shares}</Table.Td>
           <Table.Td>{`₱ ${dividend.tax_amount}`}</Table.Td>
-          <Table.Td>{`₱ ${dividend.amount_per_share * dividend.no_of_shares + dividend.tax_amount}`}</Table.Td>
+          <Table.Td>{`₱ ${dividend.amount_per_share * dividend.no_of_shares - dividend.tax_amount}`}</Table.Td>
         </Table.Tr>
       );
     });
