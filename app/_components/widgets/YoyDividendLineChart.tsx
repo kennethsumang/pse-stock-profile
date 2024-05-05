@@ -1,20 +1,47 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
-import {
-  LineChart,
-  Line,
-  XAxis,
-  YAxis,
-  CartesianGrid,
-  Tooltip,
-  Legend,
-  ResponsiveContainer,
-} from "recharts";
+import React, { useEffect, useMemo, useState } from "react";
+import { Text } from "@mantine/core";
 import { getCurrentDomain } from "@/app/_utils/http.library";
 import useToast from "@/app/_hooks/useToast";
 import WidgetContainer from "./WidgetContainer";
 import { Loader } from "@mantine/core";
+import {
+  Chart as ChartJS,
+  CategoryScale,
+  LinearScale,
+  PointElement,
+  LineElement,
+  Title,
+  Tooltip,
+  Legend,
+} from 'chart.js';
+import { Line } from 'react-chartjs-2';
+import _ from "lodash";
+
+ChartJS.register(
+  CategoryScale,
+  LinearScale,
+  PointElement,
+  LineElement,
+  Title,
+  Tooltip,
+  Legend
+);
+
+export const options = {
+  responsive: true,
+  plugins: {
+    legend: {
+      position: 'top' as const,
+    },
+    title: {
+      display: true,
+      text: 'Total Year-on-Year Dividends',
+    },
+  },
+};
+
 
 interface YoyData {
   year: string;
@@ -25,6 +52,19 @@ export default function YoyDividendLineChart() {
   const toast = useToast();
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [data, setData] = useState<YoyData[]>([]);
+  const chartData = useMemo(() => {
+    return {
+      labels: _.map(data, 'year'),
+      datasets: [
+        {
+          label: 'Dataset 1',
+          data: _.map(data, 'total_amt'),
+          borderColor: 'rgb(255, 99, 132)',
+          backgroundColor: 'rgba(255, 99, 132, 0.5)',
+        },
+      ],
+    };
+  }, [data]);
 
   useEffect(() => {
     fetchYoyData();
@@ -53,33 +93,10 @@ export default function YoyDividendLineChart() {
     )
   }
 
+  console.log(data);
   return (
     <WidgetContainer>
-      <ResponsiveContainer width="100%" height="100%">
-        <LineChart
-          width={500}
-          height={300}
-          data={data}
-          margin={{
-            top: 5,
-            right: 30,
-            left: 20,
-            bottom: 5,
-          }}
-        >
-          <CartesianGrid strokeDasharray="3 3" />
-          <XAxis dataKey="year" />
-          <YAxis />
-          <Tooltip />
-          <Legend />
-          <Line
-            type="monotone"
-            dataKey="total_amt"
-            stroke="#8884d8"
-            activeDot={{ r: 8 }}
-          />
-        </LineChart>
-      </ResponsiveContainer>
+      <Line options={options} data={chartData} />
     </WidgetContainer>
   );
 }

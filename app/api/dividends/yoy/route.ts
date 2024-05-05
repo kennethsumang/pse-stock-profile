@@ -8,7 +8,10 @@ import _ from "lodash";
  */
 export async function GET(request: NextRequest, response: NextResponse) {
   const client = createClient();
-  const dividendsResponse = await client.from("dividends_yoy").select("*");
+  const dividendsResponse = await client
+    .from("dividends_yoy")
+    .select("*")
+    .order("year", { ascending: true });
 
   if (dividendsResponse.error) {
     return Response.json(

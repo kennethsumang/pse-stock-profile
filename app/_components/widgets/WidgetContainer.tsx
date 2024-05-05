@@ -14,11 +14,9 @@ export default function WidgetContainer({ children }: Props) {
   return (
     <Paper
       withBorder
-      // w={{
-      //   md: "100%",
-      //   xl: "50%",
-      // }}
-      p="3rem"
+      // w="100%"
+      h="20rem"
+      p="1rem"
     >
       {children}
     </Paper>
