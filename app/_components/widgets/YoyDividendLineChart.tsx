@@ -58,8 +58,8 @@ export default function YoyDividendLineChart() {
         {
           label: 'Total Dividends Received',
           data: _.map(data, 'total_amt'),
-          borderColor: 'rgb(255, 99, 132)',
-          backgroundColor: 'rgba(255, 99, 132, 0.5)',
+          borderColor: 'rgb(53, 162, 235)',
+          backgroundColor: 'rgba(53, 162, 235, 0.5)',
         },
       ],
     };
