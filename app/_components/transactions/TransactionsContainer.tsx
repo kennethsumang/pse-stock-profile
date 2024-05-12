@@ -120,7 +120,13 @@ export default function TransactionsContainer() {
           <Table.Td>{`₱ ${transaction.price}`}</Table.Td>
           <Table.Td>{transaction.quantity}</Table.Td>
           <Table.Td>{`₱ ${transaction.tax_amount}`}</Table.Td>
-          <Table.Td>{`₱ ${transaction.price * transaction.quantity + transaction.tax_amount}`}</Table.Td>
+          <Table.Td>
+            {
+              transaction.type === 'buy'
+                ? <>{`₱ ${transaction.price * transaction.quantity + transaction.tax_amount}`}</>
+                : <>{`₱ ${transaction.price * transaction.quantity - transaction.tax_amount}`}</>
+            }
+          </Table.Td>
         </Table.Tr>
       );
     });
