@@ -24,11 +24,11 @@ export default function TotalStocksExpensesWidget() {
   }, []);
 
   /**
-   * Fetches the Year-On-Year dividend data from API
+   * Fetches the Total transaction expenses data from API
    */
   function fetchTotalData() {
     setIsLoading(true);
-    const url = new URL(`${getCurrentDomain()}/api/dividends/total`);
+    const url = new URL(`${getCurrentDomain()}/api/transactions/total-expenses`);
     fetch(url)
       .then((response) => response.json())
       .then((totalData: { data: number }) => {
@@ -36,6 +36,16 @@ export default function TotalStocksExpensesWidget() {
       })
       .catch((e) => toast("error", (e as Error).message))
       .finally(() => setIsLoading(false));
+  }
+
+  /**
+   * Format a number with commas according to the user's locale.
+   * @param {number} number - The number to format.
+   * @param {string} [locale='en-US'] - The locale to use for formatting. Defaults to 'en-US'.
+   * @returns {string} The formatted number with commas.
+   */
+  function formatNumberWithCommas(number: number): string {
+    return new Intl.NumberFormat().format(number);
   }
 
   if (isLoading) {
@@ -61,7 +71,7 @@ export default function TotalStocksExpensesWidget() {
             >
               PHP
             </Text>
-            <Text style={{ fontSize: "2.5rem", fontWeight: "bold" }}>{ total }</Text>
+            <Text style={{ fontSize: "2.5rem", fontWeight: "bold" }}>{ formatNumberWithCommas(total) }</Text>
         </div>
       </div>
     </WidgetContainer>

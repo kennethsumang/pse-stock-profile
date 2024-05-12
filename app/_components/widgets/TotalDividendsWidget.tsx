@@ -38,6 +38,16 @@ export default function TotalDividendsWidget() {
       .finally(() => setIsLoading(false));
   }
 
+  /**
+   * Format a number with commas according to the user's locale.
+   * @param {number} number - The number to format.
+   * @param {string} [locale='en-US'] - The locale to use for formatting. Defaults to 'en-US'.
+   * @returns {string} The formatted number with commas.
+   */
+  function formatNumberWithCommas(number: number): string {
+    return new Intl.NumberFormat().format(number);
+  }
+
   if (isLoading) {
     return (
       <WidgetContainer>
@@ -61,7 +71,7 @@ export default function TotalDividendsWidget() {
             >
               PHP
             </Text>
-            <Text style={{ fontSize: "2.5rem", fontWeight: "bold" }}>{ total }</Text>
+            <Text style={{ fontSize: "2.5rem", fontWeight: "bold" }}>{ formatNumberWithCommas(total) }</Text>
         </div>
       </div>
     </WidgetContainer>
