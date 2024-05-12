@@ -51,8 +51,8 @@ export default function DividendsContainer() {
 
   useEffect(() => {
     setCompanyFilter(null);
-    setDateFrom(DateTime.now().minus({ month: 1 }).toJSDate());
-    setDateTo(DateTime.now().toJSDate());
+    // setDateFrom(DateTime.now().minus({ month: 1 }).toJSDate());
+    // setDateTo(DateTime.now().toJSDate());
     fetchDividends();
   }, [dividendKey]);
 
