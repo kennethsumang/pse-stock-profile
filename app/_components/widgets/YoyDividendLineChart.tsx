@@ -56,7 +56,7 @@ export default function YoyDividendLineChart() {
       labels: _.map(data, 'year'),
       datasets: [
         {
-          label: 'Dataset 1',
+          label: 'Total Dividends Received',
           data: _.map(data, 'total_amt'),
           borderColor: 'rgb(255, 99, 132)',
           backgroundColor: 'rgba(255, 99, 132, 0.5)',
