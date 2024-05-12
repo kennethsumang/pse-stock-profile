@@ -86,6 +86,16 @@ export default function TransactionsContainer() {
       .finally(() => setIsLoading(false));
   }
 
+  /**
+    * Clips a floating-point number to two decimal places.
+    * 
+    * @param {number} num - The number to clip.
+    * @returns {number} The clipped number with two decimal places.
+    */
+  function clipToTwoDecimalPlaces(num: number) {
+    return parseFloat(num.toFixed(2));
+  }
+
   function renderTableItems(): React.ReactNode {
     if (isLoading) {
       return (
@@ -123,8 +133,8 @@ export default function TransactionsContainer() {
           <Table.Td>
             {
               transaction.type === 'buy'
-                ? <>{`₱ ${transaction.price * transaction.quantity + transaction.tax_amount}`}</>
-                : <>{`₱ ${transaction.price * transaction.quantity - transaction.tax_amount}`}</>
+                ? <>{`₱ ${clipToTwoDecimalPlaces(transaction.price * transaction.quantity + transaction.tax_amount)}`}</>
+                : <>{`₱ ${clipToTwoDecimalPlaces(transaction.price * transaction.quantity - transaction.tax_amount)}`}</>
             }
           </Table.Td>
         </Table.Tr>

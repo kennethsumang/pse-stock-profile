@@ -86,6 +86,16 @@ export default function DividendsContainer() {
       .finally(() => setIsLoading(false));
   }
 
+  /**
+  * Clips a floating-point number to two decimal places.
+  * 
+  * @param {number} num - The number to clip.
+  * @returns {number} The clipped number with two decimal places.
+  */
+  function clipToTwoDecimalPlaces(num: number) {
+    return parseFloat(num.toFixed(2));
+  }
+
   function renderTableItems(): React.ReactNode {
     if (isLoading) {
       return (
@@ -117,7 +127,7 @@ export default function DividendsContainer() {
           <Table.Td>{`₱ ${dividend.amount_per_share}`}</Table.Td>
           <Table.Td>{dividend.no_of_shares}</Table.Td>
           <Table.Td>{`₱ ${dividend.tax_amount}`}</Table.Td>
-          <Table.Td>{`₱ ${dividend.amount_per_share * dividend.no_of_shares - dividend.tax_amount}`}</Table.Td>
+          <Table.Td>{`₱ ${clipToTwoDecimalPlaces(dividend.amount_per_share * dividend.no_of_shares - dividend.tax_amount)}`}</Table.Td>
         </Table.Tr>
       );
     });
