@@ -84,7 +84,7 @@ export default function YoyDividendLineChart() {
       .finally(() => setIsLoading(false));
   }
 
-  if (isLoading || data.length === 0) {
+  if (isLoading) {
     return (
       <WidgetContainer>
         <Loader />
@@ -92,7 +92,6 @@ export default function YoyDividendLineChart() {
     )
   }
 
-  console.log(data);
   return (
     <WidgetContainer>
       <Line options={options} data={chartData} />

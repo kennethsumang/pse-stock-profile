@@ -91,7 +91,7 @@ export default function YoyTransactionLineChart() {
       .finally(() => setIsLoading(false));
   }
 
-  if (isLoading || data.length === 0) {
+  if (isLoading) {
     return (
       <WidgetContainer>
         <Loader />
@@ -99,7 +99,6 @@ export default function YoyTransactionLineChart() {
     )
   }
 
-  console.log(data);
   return (
     <WidgetContainer>
       <Line options={options} data={chartData} />
