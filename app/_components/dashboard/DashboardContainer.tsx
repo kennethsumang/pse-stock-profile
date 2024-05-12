@@ -1,4 +1,5 @@
 import YoyDividendLineChart from "../widgets/YoyDividendLineChart";
+import YoyTransactionLineChart from "../widgets/YoyTransactionLineChart";
 import classes from "./DashboardContainer.module.css";
 
 /**
@@ -10,7 +11,7 @@ export default function DashboardContainer() {
     <div style={{ display: "flex", flexDirection: "column" }}>
       <div className={classes.dashboard__container}>
         <YoyDividendLineChart />
-        <YoyDividendLineChart />
+        <YoyTransactionLineChart />
       </div>
     </div>
   );
