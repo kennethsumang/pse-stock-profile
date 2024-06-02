@@ -6,6 +6,7 @@ import { Transaction, TransactionResponse } from "@/app/_types/transactions";
 import { getCurrentDomain } from "@/app/_utils/http.library";
 import useToast from "@/app/_hooks/useToast";
 import {
+  Checkbox,
   Combobox,
   Input,
   InputBase,
@@ -19,6 +20,7 @@ import { DateTime } from "luxon";
 import CompanySelector from "../companies/CompanySelector";
 import { Company } from "@/app/_types/companies";
 import { useTransactionStore } from "@/app/_store";
+import { IconFilter, IconTrash } from "@tabler/icons-react";
 
 export default function TransactionsContainer() {
   const toast = useToast();
@@ -33,6 +35,8 @@ export default function TransactionsContainer() {
   );
   const [dateTo, setDateTo] = useState<Date>(DateTime.now().toJSDate());
   const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [selectedTransactions, setSelectedTransactions] = useState<number[]>([1]);
+  const [filterHidden, setFilterHidden] = useState<boolean>(true);
   const combobox = useCombobox({
     onDropdownClose: () => combobox.resetSelectedOption(),
   });
@@ -96,6 +100,10 @@ export default function TransactionsContainer() {
     return parseFloat(num.toFixed(2));
   }
 
+  /**
+   * Renders the transaction table items
+   * @returns {React.ReactNode}
+   */
   function renderTableItems(): React.ReactNode {
     if (isLoading) {
       return (
@@ -121,6 +129,9 @@ export default function TransactionsContainer() {
       return (
         <Table.Tr key={transaction.id}>
           <Table.Td>
+            <Checkbox />
+          </Table.Td>
+          <Table.Td>
             {DateTime.fromISO(
               transaction.transaction_timestamp,
             ).toLocaleString()}
@@ -142,10 +153,16 @@ export default function TransactionsContainer() {
     });
   }
 
-  return (
-    <div
-      style={{ display: "flex", flexDirection: "column", paddingTop: "1rem" }}
-    >
+  /**
+   * Renders filter row based on `filterHidden` state
+   * @returns {React.ReactNode}
+   */
+  function renderFilterRow(): React.ReactNode {
+    if (filterHidden === true) {
+      return <></>;
+    }
+
+    return (
       <div
         style={{
           display: "flex",
@@ -209,10 +226,40 @@ export default function TransactionsContainer() {
           </Combobox>
         </div>
       </div>
+    );
+  }
+
+  return (
+    <div
+      style={{ display: "flex", flexDirection: "column", paddingTop: "1rem" }}
+    >
+      <div
+        style={{
+          display: "flex",
+          flexDirection: "row",
+          justifyContent: "flex-end",
+          gap: "1rem",
+          marginBottom: "1rem"
+        }}
+      >
+        <IconFilter
+          size={20}
+          style={{ cursor: "pointer" }}
+          onClick={() => setFilterHidden(!filterHidden)}
+        />
+        {
+          selectedTransactions.length > 0 &&  <IconTrash size={20} color="red" style={{ cursor: "pointer" }} />
+        }
+      </div>
+      { renderFilterRow() }
+      
       <ScrollArea w="100%">
         <Table>
           <Table.Thead>
             <Table.Tr>
+              <Table.Th>
+                <Checkbox />
+              </Table.Th>
               <Table.Th>Date</Table.Th>
               <Table.Th>Type</Table.Th>
               <Table.Th>Symbol</Table.Th>
