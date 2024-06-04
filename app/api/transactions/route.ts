@@ -190,7 +190,7 @@ export async function DELETE(request: NextRequest, response: NextResponse) {
         },
       }, {
         status: 401,
-        statusText: 'Failed creating new transaction.'
+        statusText: 'Unauthorized.'
       });
   }
 
