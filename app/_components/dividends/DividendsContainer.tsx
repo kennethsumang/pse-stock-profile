@@ -36,7 +36,7 @@ export default function DividendsContainer() {
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [companyFilter, setCompanyFilter] = useState<Company | null>(null);
   const [dateFrom, setDateFrom] = useState<Date>(
-    DateTime.now().minus({ month: 1 }).toJSDate(),
+    DateTime.now().minus({ year: 1 }).toJSDate(),
   );
   const [dateTo, setDateTo] = useState<Date>(DateTime.now().toJSDate());
   const [isLoading, setIsLoading] = useState<boolean>(false);
