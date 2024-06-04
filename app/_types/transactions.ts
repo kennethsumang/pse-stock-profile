@@ -12,10 +12,7 @@ export interface Transaction {
   price: number;
   created_at: string;
   transaction_timestamp: string;
-  companies: {
-    symbol: string;
-    company_name: string;
-  }
+  companies: Company
 }
 
 export interface TransactionResponse {

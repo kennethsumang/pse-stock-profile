@@ -8,16 +8,17 @@ import _ from 'lodash';
 // import "./CompanySelector.module.css";
 
 interface Props {
+  value?: Company;
   onSelect: (company: Company|null) => void;
   addAllCompaniesOption: boolean;
 }
 
-export default function CompanySelector({ onSelect, addAllCompaniesOption }: Props) {
+export default function CompanySelector({ value, onSelect, addAllCompaniesOption }: Props) {
   const companyList = useCompanyStore((store) => store.companies);
   const isFetching = useCompanyStore((store) => store.isFetching);
   const fetchAllCompanies = useCompanyStore((store) => store.fetchAllCompanies);
   const [search, setSearch] = useState('');
-  const [selectedCompany, setSelectedCompany] = useState<Company|null>(null);
+  const [selectedCompany, setSelectedCompany] = useState<Company|null>(value ?? null);
   const options = useMemo(() => {
     return companyList
       .filter((company: Company) => {

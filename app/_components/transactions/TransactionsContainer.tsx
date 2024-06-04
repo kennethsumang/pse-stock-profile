@@ -25,6 +25,7 @@ import { useTransactionStore } from "@/app/_store";
 import { IconFilter, IconTrash } from "@tabler/icons-react";
 import _ from "lodash";
 import { useDisclosure } from "@mantine/hooks";
+import EditTransactionModal from "./EditTransactionModal";
 
 export default function TransactionsContainer() {
   const toast = useToast();
@@ -55,6 +56,10 @@ export default function TransactionsContainer() {
     return _.intersection(selectedTransactionIds, transactionIdsInPage);
   }, [selectedTransactionIds, transactions]);
   const [deleteConfirmModalOpened, { open, close }] = useDisclosure(false);
+
+  // For Edit transaction
+  const [transactionToEdit, setTransactionToEdit] = useState<Transaction|null>(null);
+  const [isEditModalOpen, setIsEditModalOpen] = useState<boolean>(false);
 
   useEffect(() => {
     fetchTransactions();
@@ -147,7 +152,14 @@ export default function TransactionsContainer() {
         {
           transactions.map((transaction: Transaction) => {
             return (
-              <Table.Tr key={transaction.id}>
+              <Table.Tr
+                key={transaction.id}
+                style={{ cursor: "pointer" }}
+                onClick={() => {
+                  setTransactionToEdit(transaction);
+                  setIsEditModalOpen(true)
+                }}
+              >
                 <Table.Td>
                   <Checkbox
                     style={{ cursor: 'pointer' }}
@@ -405,6 +417,18 @@ export default function TransactionsContainer() {
           </div>
         </div>
       </Modal>
+
+      <EditTransactionModal
+        data={transactionToEdit}
+        open={isEditModalOpen}
+        onClose={(saved: boolean) => {
+          setIsEditModalOpen(false);
+          setTransactionToEdit(null);
+          if (saved) {
+            increment();
+          }
+        }}
+      />
     </>
   );
 }
