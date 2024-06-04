@@ -119,7 +119,7 @@ export default function AddDividendModal(props: Props) {
           />
 
           <NumberInput
-            label="Total Tax Amount"
+            label="Total Taxes & Fees"
             fixedDecimalScale
             decimalScale={2}
             value={form.tax_amount}

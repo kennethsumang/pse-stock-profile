@@ -354,7 +354,7 @@ export default function TransactionsContainer() {
                 <Table.Th>Symbol</Table.Th>
                 <Table.Th>Price</Table.Th>
                 <Table.Th>Quantity</Table.Th>
-                <Table.Th>Tax & Fees</Table.Th>
+                <Table.Th>Taxes & Fees</Table.Th>
                 <Table.Th>Total</Table.Th>
               </Table.Tr>
             </Table.Thead>

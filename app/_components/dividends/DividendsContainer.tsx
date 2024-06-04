@@ -339,7 +339,7 @@ export default function DividendsContainer() {
                 <Table.Th>Symbol</Table.Th>
                 <Table.Th>Price</Table.Th>
                 <Table.Th># of Shares</Table.Th>
-                <Table.Th>Tax Amount</Table.Th>
+                <Table.Th>Taxes & Fees</Table.Th>
                 <Table.Th>Total</Table.Th>
               </Table.Tr>
             </Table.Thead>
