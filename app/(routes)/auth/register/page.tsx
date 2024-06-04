@@ -1,10 +1,10 @@
-import LoginContainer from "@/app/_components/auth/LoginContainer";
 import classes from "./page.module.css";
 import { createClient } from "@/app/_utils/supabase/server";
 import { redirect } from "next/navigation";
+import RegisterContainer from "@/app/_components/auth/RegisterContainer";
 
 /**
- * IndexPage component
+ * Register page component
  * @author Kenneth Sumang
  */
 export default async function Page() {
@@ -17,7 +17,8 @@ export default async function Page() {
 
   return (
     <div className={classes.container}>
-      <LoginContainer />
+      {/* <RegisterContainer /> */}
+      <h1>It is not yet possible to register for the mean time.</h1>
     </div>
-  )
+  );
 }
