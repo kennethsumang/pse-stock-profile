@@ -25,6 +25,7 @@ import { getCurrentDomain } from "@/app/_utils/http.library";
 import useToast from "@/app/_hooks/useToast";
 import Link from "next/link";
 import { useAuthStore } from "@/app/_store";
+import Image from "next/image";
 
 interface Props {
   children: React.ReactNode;
@@ -78,7 +79,7 @@ export default function AppLayout({ children }: Props) {
       <AppShell.Header>
         <Group h="100%" px="md">
           <Burger opened={opened} onClick={toggle} hiddenFrom="sm" size="sm" />
-          <IconBrandMantine size={30} />
+          <Image src="/logo.png" alt="logo" width={30} height={30} style={{ borderRadius: "100%" }} />
           <Text size="lg">PSE Stock Profile</Text>
         </Group>
       </AppShell.Header>
@@ -144,6 +145,7 @@ export default function AppLayout({ children }: Props) {
           width: "100%",
           alignItems: "center",
           paddingBottom: "1rem",
+          lineHeight: "1.25rem"
         }}
       >
         <span>{`© Kenneth Sumang, ${new Date().getFullYear()}`}</span>
