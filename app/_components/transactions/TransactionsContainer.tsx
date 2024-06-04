@@ -6,11 +6,13 @@ import { Transaction, TransactionResponse } from "@/app/_types/transactions";
 import { getCurrentDomain } from "@/app/_utils/http.library";
 import useToast from "@/app/_hooks/useToast";
 import {
+  Button,
   Checkbox,
   Combobox,
   Input,
   InputBase,
   Loader,
+  Modal,
   Pagination,
   ScrollArea,
   Table,
@@ -22,10 +24,12 @@ import { Company } from "@/app/_types/companies";
 import { useTransactionStore } from "@/app/_store";
 import { IconFilter, IconTrash } from "@tabler/icons-react";
 import _ from "lodash";
+import { useDisclosure } from "@mantine/hooks";
 
 export default function TransactionsContainer() {
   const toast = useToast();
   const transactionKey = useTransactionStore((state) => state.key);
+  const increment = useTransactionStore((state) => state.increment);
   const [transactions, setTransactions] = useState<Transaction[]>([]);
   const [count, setCount] = useState<number>(0);
   const [limitPerPage, setLimitPerPage] = useState<number>(10);
@@ -50,6 +54,7 @@ export default function TransactionsContainer() {
     const transactionIdsInPage = _.map(transactions, 'id');
     return _.intersection(selectedTransactionIds, transactionIdsInPage);
   }, [selectedTransactionIds, transactions]);
+  const [deleteConfirmModalOpened, { open, close }] = useDisclosure(false);
 
   useEffect(() => {
     fetchTransactions();
@@ -208,6 +213,29 @@ export default function TransactionsContainer() {
   }
 
   /**
+   * Handles deleting transactions selected
+   */
+  function handleDeleteTransactions() {
+    const url = new URL(`${getCurrentDomain()}/api/transactions`);
+    fetch(
+      url.toString(),
+      {
+        method: 'DELETE',
+        body: JSON.stringify({
+          transaction_ids: selectedTransactionIds,
+        })
+      }
+    )
+      .then((response) => response.json())
+      .then((response: TransactionResponse) => toast("success", `${response.data.length} transactions deleted.`))
+      .catch((e) => toast("error", (e as Error).message))
+      .finally(() => {
+        close();
+        increment();
+      });
+  }
+
+  /**
    * Renders filter row based on `filterHidden` state
    * @returns {React.ReactNode}
    */
@@ -284,64 +312,99 @@ export default function TransactionsContainer() {
   }
 
   return (
-    <div
-      style={{ display: "flex", flexDirection: "column", paddingTop: "1rem" }}
-    >
+    <>
       <div
-        style={{
-          display: "flex",
-          flexDirection: "row",
-          justifyContent: "flex-end",
-          gap: "1rem",
-          marginBottom: "1rem"
-        }}
+        style={{ display: "flex", flexDirection: "column", paddingTop: "1rem" }}
       >
-        {
-          selectedTransactionIds.length > 0 &&  <IconTrash size={20} color="red" style={{ cursor: "pointer" }} />
-        }
-        <IconFilter
-          size={20}
-          style={{ cursor: "pointer" }}
-          onClick={() => setFilterHidden(!filterHidden)}
+        <div
+          style={{
+            display: "flex",
+            flexDirection: "row",
+            justifyContent: "flex-end",
+            gap: "1rem",
+            marginBottom: "1rem"
+          }}
+        >
+          {
+            selectedTransactionIds.length > 0
+            &&  <IconTrash size={20} color="red" style={{ cursor: "pointer" }} onClick={open} />
+          }
+          <IconFilter
+            size={20}
+            style={{ cursor: "pointer" }}
+            onClick={() => setFilterHidden(!filterHidden)}
+          />
+        </div>
+        { renderFilterRow() }
+        
+        <ScrollArea w="100%">
+          <Table>
+            <Table.Thead>
+              <Table.Tr>
+                <Table.Th>
+                  <Checkbox
+                    style={{ cursor: 'pointer' }}
+                    checked={selectedIdsInPage.length !== 0 && selectedIdsInPage.length === transactions.length}
+                    indeterminate={selectedIdsInPage.length > 0 && selectedIdsInPage.length !== transactions.length}
+                    onChange={(e) => onTogglePageCheckbox(e.currentTarget.checked)}
+                  />
+                </Table.Th>
+                <Table.Th>Date</Table.Th>
+                <Table.Th>Type</Table.Th>
+                <Table.Th>Symbol</Table.Th>
+                <Table.Th>Price</Table.Th>
+                <Table.Th>Quantity</Table.Th>
+                <Table.Th>Tax & Fees</Table.Th>
+                <Table.Th>Total</Table.Th>
+              </Table.Tr>
+            </Table.Thead>
+
+            {renderTableItems()}
+          </Table>
+        </ScrollArea>
+        <Pagination
+          style={{
+            paddingTop: "1rem",
+            display: "flex",
+            justifyContent: "center",
+          }}
+          total={totalPages}
+          value={currentPage}
+          onChange={setCurrentPage}
         />
       </div>
-      { renderFilterRow() }
-      
-      <ScrollArea w="100%">
-        <Table>
-          <Table.Thead>
-            <Table.Tr>
-              <Table.Th>
-                <Checkbox
-                  style={{ cursor: 'pointer' }}
-                  checked={selectedIdsInPage.length !== 0 && selectedIdsInPage.length === transactions.length}
-                  indeterminate={selectedIdsInPage.length > 0 && selectedIdsInPage.length !== transactions.length}
-                  onChange={(e) => onTogglePageCheckbox(e.currentTarget.checked)}
-                />
-              </Table.Th>
-              <Table.Th>Date</Table.Th>
-              <Table.Th>Type</Table.Th>
-              <Table.Th>Symbol</Table.Th>
-              <Table.Th>Price</Table.Th>
-              <Table.Th>Quantity</Table.Th>
-              <Table.Th>Tax & Fees</Table.Th>
-              <Table.Th>Total</Table.Th>
-            </Table.Tr>
-          </Table.Thead>
-
-          {renderTableItems()}
-        </Table>
-      </ScrollArea>
-      <Pagination
-        style={{
-          paddingTop: "1rem",
-          display: "flex",
-          justifyContent: "center",
-        }}
-        total={totalPages}
-        value={currentPage}
-        onChange={setCurrentPage}
-      />
-    </div>
+      <Modal
+        opened={deleteConfirmModalOpened}
+        withCloseButton={false}
+        centered={true}
+        onClose={close}
+        title={<span style={{ fontWeight: "bold" }}>Confirm Transaction Deletion</span>}
+        style={{ padding: "2rem" }}
+      >
+        <div style={{ display: "flex", flexDirection: "column" }}>
+          <span style={{ marginBottom: "2rem" }}>
+            Are you sure you want to delete {selectedTransactionIds.length} transactions? This can not be undone.
+          </span>
+          <div style={{ display: "flex", flexDirection: "row", justifyContent: "flex-end", columnGap: "1rem" }}>
+            <Button
+              variant="filled"
+              color="gray"
+              style={{ width: "100px" }}
+              onClick={close}
+            >
+              Cancel
+            </Button>
+            <Button
+              variant="filled"
+              color="red"
+              style={{ width: "100px" }}
+              onClick={handleDeleteTransactions}
+            >
+              OK
+            </Button>
+          </div>
+        </div>
+      </Modal>
+    </>
   );
 }
