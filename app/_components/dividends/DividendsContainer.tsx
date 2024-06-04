@@ -5,6 +5,7 @@ import { DateTimePicker } from "@mantine/dates";
 import { getCurrentDomain } from "@/app/_utils/http.library";
 import useToast from "@/app/_hooks/useToast";
 import {
+  Checkbox,
   Combobox,
   Input,
   InputBase,
@@ -19,6 +20,8 @@ import CompanySelector from "../companies/CompanySelector";
 import { Company } from "@/app/_types/companies";
 import { useDividendStore } from "@/app/_store";
 import { Dividend, DividendResponse } from "@/app/_types/dividends";
+import _ from "lodash";
+import { useDisclosure } from "@mantine/hooks";
 
 export default function DividendsContainer() {
   const toast = useToast();
@@ -39,6 +42,14 @@ export default function DividendsContainer() {
   const totalPages = useMemo(() => {
     return Math.ceil(count / limitPerPage);
   }, [count, limitPerPage]);
+
+  // For select/unselect
+  const [selectedDividendIds, setSelectedDividendIds] = useState<number[]>([]);
+  const selectedIdsInPage = useMemo(() => {
+    const transactionIdsInPage = _.map(dividends, 'id');
+    return _.intersection(selectedDividendIds, transactionIdsInPage);
+  }, [selectedDividendIds, dividends]);
+  const [deleteConfirmModalOpened, { open, close }] = useDisclosure(false);
 
   useEffect(() => {
     fetchDividends();
@@ -99,38 +110,88 @@ export default function DividendsContainer() {
   function renderTableItems(): React.ReactNode {
     if (isLoading) {
       return (
-        <div
+        <Table.Tbody
           style={{ width: "100%", display: "flex", justifyContent: "center" }}
         >
-          <Loader color="blue" />
-        </div>
+          <Table.Tr>
+            <Table.Td colSpan={8} style={{ textAlign: "center" }}>
+                <Loader color="blue" />
+            </Table.Td>
+          </Table.Tr>
+        </Table.Tbody>
       );
     }
 
     if (dividends.length === 0) {
       return (
-        <Table.Tr>
-          <Table.Td colSpan={7} style={{ textAlign: "center" }}>
-            No results.
-          </Table.Td>
-        </Table.Tr>
+        <Table.Tbody>
+          <Table.Tr>
+            <Table.Td colSpan={8} style={{ textAlign: "center" }}>
+              No results.
+            </Table.Td>
+          </Table.Tr>
+        </Table.Tbody>
       );
     }
+    return (
+      <Table.Tbody>
+        {
+          dividends.map((dividend: Dividend) => {
+            return (
+              <Table.Tr key={dividend.id}>
+                <Table.Td>
+                  <Checkbox
+                    style={{ cursor: 'pointer' }}
+                    checked={selectedDividendIds.includes(dividend.id)}
+                    onChange={() => onToggleItemCheckbox(dividend.id)}
+                  />
+                </Table.Td>
+                <Table.Td>
+                  {DateTime.fromISO(dividend.dividend_timestamp).toLocaleString()}
+                </Table.Td>
+                <Table.Td>{dividend.companies.symbol}</Table.Td>
+                <Table.Td>{`₱ ${dividend.amount_per_share}`}</Table.Td>
+                <Table.Td>{dividend.no_of_shares}</Table.Td>
+                <Table.Td>{`₱ ${dividend.tax_amount}`}</Table.Td>
+                <Table.Td>{`₱ ${clipToTwoDecimalPlaces(dividend.amount_per_share * dividend.no_of_shares - dividend.tax_amount)}`}</Table.Td>
+              </Table.Tr>
+            );
+          })
+        }
+      </Table.Tbody>
+    );
+  }
 
-    return dividends.map((dividend: Dividend) => {
-      return (
-        <Table.Tr key={dividend.id}>
-          <Table.Td>
-            {DateTime.fromISO(dividend.dividend_timestamp).toLocaleString()}
-          </Table.Td>
-          <Table.Td>{dividend.companies.symbol}</Table.Td>
-          <Table.Td>{`₱ ${dividend.amount_per_share}`}</Table.Td>
-          <Table.Td>{dividend.no_of_shares}</Table.Td>
-          <Table.Td>{`₱ ${dividend.tax_amount}`}</Table.Td>
-          <Table.Td>{`₱ ${clipToTwoDecimalPlaces(dividend.amount_per_share * dividend.no_of_shares - dividend.tax_amount)}`}</Table.Td>
-        </Table.Tr>
-      );
-    });
+  /**
+   * On click handler for transaction item checkbox
+   * @param   {number} id
+   */
+  function onToggleItemCheckbox(id: number) {
+    if (selectedDividendIds.includes(id)) {
+      const newList = _.without([...selectedDividendIds], id);
+      setSelectedDividendIds(newList);
+      return;
+    }
+
+    const newList = [...selectedDividendIds, id];
+    setSelectedDividendIds(newList);
+  }
+
+  /**
+   * On click handler for page checkbox
+   * @param {boolean} isChecked
+   */
+  function onTogglePageCheckbox(isChecked: boolean) {
+    if (isChecked) {
+      const transactionIdsInPage = _.map(dividends, 'id');
+      const newList = [...selectedDividendIds, ...transactionIdsInPage];
+      setSelectedDividendIds(_.uniq(newList));
+      return;
+    }
+
+    const transactionIdsInPage = _.map(dividends, 'id');
+    const newList = _.difference(selectedDividendIds, transactionIdsInPage);
+    setSelectedDividendIds(newList);
   }
 
   return (
@@ -204,6 +265,14 @@ export default function DividendsContainer() {
         <Table>
           <Table.Thead>
             <Table.Tr>
+              <Table.Th>
+                <Checkbox
+                  style={{ cursor: 'pointer' }}
+                  checked={selectedIdsInPage.length !== 0 && selectedIdsInPage.length === dividends.length}
+                  indeterminate={selectedIdsInPage.length > 0 && selectedIdsInPage.length !== dividends.length}
+                  onChange={(e) => onTogglePageCheckbox(e.currentTarget.checked)}
+                />
+              </Table.Th>
               <Table.Th>Date</Table.Th>
               <Table.Th>Symbol</Table.Th>
               <Table.Th>Price</Table.Th>
@@ -213,7 +282,7 @@ export default function DividendsContainer() {
             </Table.Tr>
           </Table.Thead>
 
-          <Table.Tbody>{renderTableItems()}</Table.Tbody>
+          {renderTableItems()}
         </Table>
       </ScrollArea>
       <Pagination
