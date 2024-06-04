@@ -21,6 +21,7 @@ import CompanySelector from "../companies/CompanySelector";
 import { Company } from "@/app/_types/companies";
 import { useTransactionStore } from "@/app/_store";
 import { IconFilter, IconTrash } from "@tabler/icons-react";
+import _ from "lodash";
 
 export default function TransactionsContainer() {
   const toast = useToast();
@@ -35,7 +36,6 @@ export default function TransactionsContainer() {
   );
   const [dateTo, setDateTo] = useState<Date>(DateTime.now().toJSDate());
   const [isLoading, setIsLoading] = useState<boolean>(false);
-  const [selectedTransactions, setSelectedTransactions] = useState<number[]>([1]);
   const [filterHidden, setFilterHidden] = useState<boolean>(true);
   const combobox = useCombobox({
     onDropdownClose: () => combobox.resetSelectedOption(),
@@ -43,6 +43,13 @@ export default function TransactionsContainer() {
   const totalPages = useMemo(() => {
     return Math.ceil(count / limitPerPage);
   }, [count, limitPerPage]);
+
+  // For select/unselect
+  const [selectedTransactionIds, setSelectedTransactionIds] = useState<number[]>([]);
+  const selectedIdsInPage = useMemo(() => {
+    const transactionIdsInPage = _.map(transactions, 'id');
+    return _.intersection(selectedTransactionIds, transactionIdsInPage);
+  }, [selectedTransactionIds, transactions]);
 
   useEffect(() => {
     fetchTransactions();
@@ -84,7 +91,6 @@ export default function TransactionsContainer() {
       .then((response: TransactionResponse) => {
         setTransactions(response.data);
         setCount(response.total);
-        console.log(response);
       })
       .catch((e) => toast("error", (e as Error).message))
       .finally(() => setIsLoading(false));
@@ -107,50 +113,98 @@ export default function TransactionsContainer() {
   function renderTableItems(): React.ReactNode {
     if (isLoading) {
       return (
-        <div
+        <Table.Tbody
           style={{ width: "100%", display: "flex", justifyContent: "center" }}
         >
-          <Loader color="blue" />
-        </div>
+          <Table.Tr>
+            <Table.Td colSpan={8} style={{ textAlign: "center" }}>
+                <Loader color="blue" />
+            </Table.Td>
+          </Table.Tr>
+        </Table.Tbody>
       );
     }
 
     if (transactions.length === 0) {
       return (
-        <Table.Tr>
-          <Table.Td colSpan={7} style={{ textAlign: "center" }}>
-            No results.
-          </Table.Td>
-        </Table.Tr>
+        <Table.Tbody>
+          <Table.Tr>
+            <Table.Td colSpan={8} style={{ textAlign: "center" }}>
+              No results.
+            </Table.Td>
+          </Table.Tr>
+        </Table.Tbody>
       );
     }
 
-    return transactions.map((transaction: Transaction) => {
-      return (
-        <Table.Tr key={transaction.id}>
-          <Table.Td>
-            <Checkbox />
-          </Table.Td>
-          <Table.Td>
-            {DateTime.fromISO(
-              transaction.transaction_timestamp,
-            ).toLocaleString()}
-          </Table.Td>
-          <Table.Td>{transaction.type.toUpperCase()}</Table.Td>
-          <Table.Td>{transaction.companies.symbol}</Table.Td>
-          <Table.Td>{`₱ ${transaction.price}`}</Table.Td>
-          <Table.Td>{transaction.quantity}</Table.Td>
-          <Table.Td>{`₱ ${transaction.tax_amount}`}</Table.Td>
-          <Table.Td>
-            {
-              transaction.type === 'buy'
-                ? <>{`₱ ${clipToTwoDecimalPlaces(transaction.price * transaction.quantity + transaction.tax_amount)}`}</>
-                : <>{`₱ ${clipToTwoDecimalPlaces(transaction.price * transaction.quantity - transaction.tax_amount)}`}</>
-            }
-          </Table.Td>
-        </Table.Tr>
-      );
-    });
+    return (
+      <Table.Tbody>
+        {
+          transactions.map((transaction: Transaction) => {
+            return (
+              <Table.Tr key={transaction.id}>
+                <Table.Td>
+                  <Checkbox
+                    style={{ cursor: 'pointer' }}
+                    checked={selectedTransactionIds.includes(transaction.id)}
+                    onChange={() => onToggleItemCheckbox(transaction.id)}
+                  />
+                </Table.Td>
+                <Table.Td>
+                  {DateTime.fromISO(
+                    transaction.transaction_timestamp,
+                  ).toLocaleString()}
+                </Table.Td>
+                <Table.Td>{transaction.type.toUpperCase()}</Table.Td>
+                <Table.Td>{transaction.companies.symbol}</Table.Td>
+                <Table.Td>{`₱ ${transaction.price}`}</Table.Td>
+                <Table.Td>{transaction.quantity}</Table.Td>
+                <Table.Td>{`₱ ${transaction.tax_amount}`}</Table.Td>
+                <Table.Td>
+                  {
+                    transaction.type === 'buy'
+                      ? <>{`₱ ${clipToTwoDecimalPlaces(transaction.price * transaction.quantity + transaction.tax_amount)}`}</>
+                      : <>{`₱ ${clipToTwoDecimalPlaces(transaction.price * transaction.quantity - transaction.tax_amount)}`}</>
+                  }
+                </Table.Td>
+              </Table.Tr>
+            );
+          })
+        }
+      </Table.Tbody>
+    );
+  }
+
+  /**
+   * On click handler for transaction item checkbox
+   * @param   {number} id
+   */
+  function onToggleItemCheckbox(id: number) {
+    if (selectedTransactionIds.includes(id)) {
+      const newList = _.without([...selectedTransactionIds], id);
+      setSelectedTransactionIds(newList);
+      return;
+    }
+
+    const newList = [...selectedTransactionIds, id];
+    setSelectedTransactionIds(newList);
+  }
+
+  /**
+   * On click handler for page checkbox
+   * @param {boolean} isChecked
+   */
+  function onTogglePageCheckbox(isChecked: boolean) {
+    if (isChecked) {
+      const transactionIdsInPage = _.map(transactions, 'id');
+      const newList = [...selectedTransactionIds, ...transactionIdsInPage];
+      setSelectedTransactionIds(_.uniq(newList));
+      return;
+    }
+
+    const transactionIdsInPage = _.map(transactions, 'id');
+    const newList = _.difference(selectedTransactionIds, transactionIdsInPage);
+    setSelectedTransactionIds(newList);
   }
 
   /**
@@ -248,7 +302,7 @@ export default function TransactionsContainer() {
           onClick={() => setFilterHidden(!filterHidden)}
         />
         {
-          selectedTransactions.length > 0 &&  <IconTrash size={20} color="red" style={{ cursor: "pointer" }} />
+          selectedIdsInPage.length > 0 &&  <IconTrash size={20} color="red" style={{ cursor: "pointer" }} />
         }
       </div>
       { renderFilterRow() }
@@ -258,19 +312,24 @@ export default function TransactionsContainer() {
           <Table.Thead>
             <Table.Tr>
               <Table.Th>
-                <Checkbox />
+                <Checkbox
+                  style={{ cursor: 'pointer' }}
+                  checked={selectedIdsInPage.length !== 0 && selectedIdsInPage.length === transactions.length}
+                  indeterminate={selectedIdsInPage.length > 0 && selectedIdsInPage.length !== transactions.length}
+                  onChange={(e) => onTogglePageCheckbox(e.currentTarget.checked)}
+                />
               </Table.Th>
               <Table.Th>Date</Table.Th>
               <Table.Th>Type</Table.Th>
               <Table.Th>Symbol</Table.Th>
               <Table.Th>Price</Table.Th>
               <Table.Th>Quantity</Table.Th>
-              <Table.Th>Tax Amount</Table.Th>
+              <Table.Th>Tax & Fees</Table.Th>
               <Table.Th>Total</Table.Th>
             </Table.Tr>
           </Table.Thead>
 
-          <Table.Tbody>{renderTableItems()}</Table.Tbody>
+          {renderTableItems()}
         </Table>
       </ScrollArea>
       <Pagination
