@@ -296,14 +296,14 @@ export default function TransactionsContainer() {
           marginBottom: "1rem"
         }}
       >
+        {
+          selectedIdsInPage.length > 0 &&  <IconTrash size={20} color="red" style={{ cursor: "pointer" }} />
+        }
         <IconFilter
           size={20}
           style={{ cursor: "pointer" }}
           onClick={() => setFilterHidden(!filterHidden)}
         />
-        {
-          selectedIdsInPage.length > 0 &&  <IconTrash size={20} color="red" style={{ cursor: "pointer" }} />
-        }
       </div>
       { renderFilterRow() }
       
