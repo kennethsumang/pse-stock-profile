@@ -1,5 +1,5 @@
 import { createClient } from "@/app/_utils/supabase/server";
-import { NextRequest, NextResponse } from "next/server";
+import { NextRequest } from "next/server";
 import { ValidationError, number, object, string } from "yup";
 
 /**
@@ -28,7 +28,7 @@ export async function PUT(request: NextRequest, { params }: { params: { transact
           },
         }, {
           status: 401,
-          statusText: 'Failed creating new transaction.'
+          statusText: 'Unauthorized.'
         });
     }
 
@@ -47,18 +47,18 @@ export async function PUT(request: NextRequest, { params }: { params: { transact
   
     try {
       const validated = await validationSchema.validate(body, { strict: true });
-      const insertResponse = await client
+      const updateResponse = await client
         .from("transactions")
         .update({ ...validated, user_id: loggedInUserResponse.data.user.id })
         .eq('id', transactionId)
         .select();
       
-      if (insertResponse.error) {
+      if (updateResponse.error) {
         return Response
           .json({
             error: {
               code: 500,
-              message: insertResponse.error.message
+              message: updateResponse.error.message
             },
           }, {
             status: 500,
@@ -67,7 +67,7 @@ export async function PUT(request: NextRequest, { params }: { params: { transact
       }
   
       return Response.json(
-        { data: insertResponse.data },
+        { data: updateResponse.data },
       );
     } catch (e) {
       if (e instanceof ValidationError) {
