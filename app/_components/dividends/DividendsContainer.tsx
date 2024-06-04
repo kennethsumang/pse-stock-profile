@@ -25,6 +25,7 @@ import { Dividend, DividendResponse } from "@/app/_types/dividends";
 import _ from "lodash";
 import { useDisclosure } from "@mantine/hooks";
 import { IconFilter, IconTrash } from "@tabler/icons-react";
+import EditDividendModal from "./EditDividendModal";
 
 export default function DividendsContainer() {
   const toast = useToast();
@@ -55,6 +56,10 @@ export default function DividendsContainer() {
     return _.intersection(selectedDividendIds, transactionIdsInPage);
   }, [selectedDividendIds, dividends]);
   const [deleteConfirmModalOpened, { open, close }] = useDisclosure(false);
+
+  // For Edit dividend
+  const [dividendToEdit, setDividendToEdit] = useState<Dividend|null>(null);
+  const [isEditModalOpen, setIsEditModalOpen] = useState<boolean>(false);
 
   useEffect(() => {
     fetchDividends();
@@ -143,7 +148,14 @@ export default function DividendsContainer() {
         {
           dividends.map((dividend: Dividend) => {
             return (
-              <Table.Tr key={dividend.id}>
+              <Table.Tr
+                key={dividend.id}
+                style={{ cursor: "pointer" }}
+                onClick={() => {
+                  setDividendToEdit(dividend);
+                  setIsEditModalOpen(true)
+                }}
+              >
                 <Table.Td>
                   <Checkbox
                     style={{ cursor: 'pointer' }}
@@ -390,6 +402,18 @@ export default function DividendsContainer() {
           </div>
         </div>
       </Modal>
+
+      <EditDividendModal
+        data={dividendToEdit}
+        open={isEditModalOpen}
+        onClose={(saved: boolean) => {
+          setIsEditModalOpen(false);
+          setDividendToEdit(null);
+          if (saved) {
+            increment();
+          }
+        }}
+      />
     </>
   );
 }

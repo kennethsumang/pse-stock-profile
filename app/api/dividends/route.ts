@@ -38,7 +38,7 @@ export async function GET(request: NextRequest, response: NextResponse) {
 
   let query = client
     .from("dividends")
-    .select("*,companies!inner(symbol,company_name)", { count: "exact" })
+    .select("*,companies!inner(*)", { count: "exact" })
     .eq("user_id", loggedInUserResponse.data.user.id);
 
   if (symbol) {

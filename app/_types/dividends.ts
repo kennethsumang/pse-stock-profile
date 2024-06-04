@@ -9,10 +9,7 @@ export interface Dividend {
   tax_amount: number;
   created_at: string;
   dividend_timestamp: string;
-  companies: {
-    symbol: string;
-    company_name: string;
-  };
+  companies: Company;
 }
 
 export interface DividendResponse {
