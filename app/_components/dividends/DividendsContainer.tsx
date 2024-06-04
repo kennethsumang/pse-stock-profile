@@ -5,11 +5,13 @@ import { DateTimePicker } from "@mantine/dates";
 import { getCurrentDomain } from "@/app/_utils/http.library";
 import useToast from "@/app/_hooks/useToast";
 import {
+  Button,
   Checkbox,
   Combobox,
   Input,
   InputBase,
   Loader,
+  Modal,
   Pagination,
   ScrollArea,
   Table,
@@ -197,6 +199,13 @@ export default function DividendsContainer() {
   }
 
   /**
+   * Handles deleting dividend records selected
+   */
+  function handleDeleteDividendRecords() {
+
+  }
+
+  /**
    * Renders filter row based on `filterHidden` state
    * @returns {React.ReactNode}
    */
@@ -273,63 +282,97 @@ export default function DividendsContainer() {
   }
 
   return (
-    <div
-      style={{ display: "flex", flexDirection: "column", paddingTop: "1rem" }}
-    >
+    <>
       <div
-        style={{
-          display: "flex",
-          flexDirection: "row",
-          justifyContent: "flex-end",
-          gap: "1rem",
-          marginBottom: "1rem"
-        }}
+        style={{ display: "flex", flexDirection: "column", paddingTop: "1rem" }}
       >
-        {
-          selectedDividendIds.length > 0
-          &&  <IconTrash size={20} color="red" style={{ cursor: "pointer" }} onClick={open} />
-        }
-        <IconFilter
-          size={20}
-          style={{ cursor: "pointer" }}
-          onClick={() => setFilterHidden(!filterHidden)}
+        <div
+          style={{
+            display: "flex",
+            flexDirection: "row",
+            justifyContent: "flex-end",
+            gap: "1rem",
+            marginBottom: "1rem"
+          }}
+        >
+          {
+            selectedDividendIds.length > 0
+            &&  <IconTrash size={20} color="red" style={{ cursor: "pointer" }} onClick={open} />
+          }
+          <IconFilter
+            size={20}
+            style={{ cursor: "pointer" }}
+            onClick={() => setFilterHidden(!filterHidden)}
+          />
+        </div>
+        {renderFilterRow()}
+        <ScrollArea w="100%">
+          <Table>
+            <Table.Thead>
+              <Table.Tr>
+                <Table.Th>
+                  <Checkbox
+                    style={{ cursor: 'pointer' }}
+                    checked={selectedIdsInPage.length !== 0 && selectedIdsInPage.length === dividends.length}
+                    indeterminate={selectedIdsInPage.length > 0 && selectedIdsInPage.length !== dividends.length}
+                    onChange={(e) => onTogglePageCheckbox(e.currentTarget.checked)}
+                  />
+                </Table.Th>
+                <Table.Th>Date</Table.Th>
+                <Table.Th>Symbol</Table.Th>
+                <Table.Th>Price</Table.Th>
+                <Table.Th># of Shares</Table.Th>
+                <Table.Th>Tax Amount</Table.Th>
+                <Table.Th>Total</Table.Th>
+              </Table.Tr>
+            </Table.Thead>
+
+            {renderTableItems()}
+          </Table>
+        </ScrollArea>
+        <Pagination
+          style={{
+            paddingTop: "1rem",
+            display: "flex",
+            justifyContent: "center",
+          }}
+          total={totalPages}
+          value={currentPage}
+          onChange={setCurrentPage}
         />
       </div>
-      {renderFilterRow()}
-      <ScrollArea w="100%">
-        <Table>
-          <Table.Thead>
-            <Table.Tr>
-              <Table.Th>
-                <Checkbox
-                  style={{ cursor: 'pointer' }}
-                  checked={selectedIdsInPage.length !== 0 && selectedIdsInPage.length === dividends.length}
-                  indeterminate={selectedIdsInPage.length > 0 && selectedIdsInPage.length !== dividends.length}
-                  onChange={(e) => onTogglePageCheckbox(e.currentTarget.checked)}
-                />
-              </Table.Th>
-              <Table.Th>Date</Table.Th>
-              <Table.Th>Symbol</Table.Th>
-              <Table.Th>Price</Table.Th>
-              <Table.Th># of Shares</Table.Th>
-              <Table.Th>Tax Amount</Table.Th>
-              <Table.Th>Total</Table.Th>
-            </Table.Tr>
-          </Table.Thead>
-
-          {renderTableItems()}
-        </Table>
-      </ScrollArea>
-      <Pagination
-        style={{
-          paddingTop: "1rem",
-          display: "flex",
-          justifyContent: "center",
-        }}
-        total={totalPages}
-        value={currentPage}
-        onChange={setCurrentPage}
-      />
-    </div>
+      <Modal
+        opened={deleteConfirmModalOpened}
+        withCloseButton={false}
+        centered={true}
+        onClose={close}
+        title={<span style={{ fontWeight: "bold" }}>Confirm Transaction Deletion</span>}
+        style={{ padding: "2rem" }}
+      >
+        <div style={{ display: "flex", flexDirection: "column" }}>
+          <span style={{ marginBottom: "2rem" }}>
+            Are you sure you want to delete {selectedDividendIds.length} dividend records? This can not be undone.
+          </span>
+          <div style={{ display: "flex", flexDirection: "row", justifyContent: "flex-end", columnGap: "1rem" }}>
+            <Button
+              variant="filled"
+              color="gray"
+              style={{ width: "100px" }}
+              onClick={close}
+            >
+              Cancel
+            </Button>
+            <Button
+              variant="filled"
+              color="red"
+              style={{ width: "100px" }}
+              onClick={handleDeleteDividendRecords}
+            >
+              OK
+            </Button>
+          </div>
+        </div>
+      </Modal>
+    </>
   );
 }
