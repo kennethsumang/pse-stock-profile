@@ -22,6 +22,7 @@ import { useDividendStore } from "@/app/_store";
 import { Dividend, DividendResponse } from "@/app/_types/dividends";
 import _ from "lodash";
 import { useDisclosure } from "@mantine/hooks";
+import { IconFilter, IconTrash } from "@tabler/icons-react";
 
 export default function DividendsContainer() {
   const toast = useToast();
@@ -36,6 +37,7 @@ export default function DividendsContainer() {
   );
   const [dateTo, setDateTo] = useState<Date>(DateTime.now().toJSDate());
   const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [filterHidden, setFilterHidden] = useState<boolean>(true);
   const combobox = useCombobox({
     onDropdownClose: () => combobox.resetSelectedOption(),
   });
@@ -194,10 +196,16 @@ export default function DividendsContainer() {
     setSelectedDividendIds(newList);
   }
 
-  return (
-    <div
-      style={{ display: "flex", flexDirection: "column", paddingTop: "1rem" }}
-    >
+  /**
+   * Renders filter row based on `filterHidden` state
+   * @returns {React.ReactNode}
+   */
+  function renderFilterRow(): React.ReactNode {
+    if (filterHidden) {
+      return <></>;
+    }
+
+    return (
       <div
         style={{
           display: "flex",
@@ -261,6 +269,33 @@ export default function DividendsContainer() {
           </Combobox>
         </div>
       </div>
+    );
+  }
+
+  return (
+    <div
+      style={{ display: "flex", flexDirection: "column", paddingTop: "1rem" }}
+    >
+      <div
+        style={{
+          display: "flex",
+          flexDirection: "row",
+          justifyContent: "flex-end",
+          gap: "1rem",
+          marginBottom: "1rem"
+        }}
+      >
+        {
+          selectedDividendIds.length > 0
+          &&  <IconTrash size={20} color="red" style={{ cursor: "pointer" }} onClick={open} />
+        }
+        <IconFilter
+          size={20}
+          style={{ cursor: "pointer" }}
+          onClick={() => setFilterHidden(!filterHidden)}
+        />
+      </div>
+      {renderFilterRow()}
       <ScrollArea w="100%">
         <Table>
           <Table.Thead>
