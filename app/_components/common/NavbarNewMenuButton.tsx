@@ -3,7 +3,7 @@
 import { Menu, Button, Text, rem } from "@mantine/core";
 import { IconPlus, IconCashBanknote } from "@tabler/icons-react";
 import { useState } from "react";
-import AddDividendModal from "../transactions/AddDividendModal";
+import AddDividendModal from "../dividends/AddDividendModal";
 import AddTransactionModal from "../transactions/AddTransactionModal";
 
 export default function NavbarNewMenuButton() {
