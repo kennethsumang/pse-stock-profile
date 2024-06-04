@@ -3,10 +3,10 @@ import { NextRequest, NextResponse } from "next/server";
 import { ValidationError, number, object } from "yup";
 
 /**
- * POST request handler
+ * PUT request handler
  * @author Kenneth Sumang
  */
-export async function POST(request: NextRequest, { params }: { params: { dividendId: string } }) {
+export async function PUT(request: NextRequest, { params }: { params: { dividendId: string } }) {
     const client = createClient();
     const body = await request.json();
     const dividendId = params.dividendId;

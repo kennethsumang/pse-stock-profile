@@ -165,6 +165,7 @@ export default function TransactionsContainer() {
                     style={{ cursor: 'pointer' }}
                     checked={selectedTransactionIds.includes(transaction.id)}
                     onChange={() => onToggleItemCheckbox(transaction.id)}
+                    onClick={(e) => e.stopPropagation()}
                   />
                 </Table.Td>
                 <Table.Td>
@@ -244,6 +245,7 @@ export default function TransactionsContainer() {
       .finally(() => {
         close();
         increment();
+        setSelectedTransactionIds([]);
       });
   }
 

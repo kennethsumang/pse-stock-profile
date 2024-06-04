@@ -101,7 +101,6 @@ export default function DividendsContainer() {
       .then((response: DividendResponse) => {
         setDividends(response.data);
         setCount(response.total);
-        console.log(response);
       })
       .catch((e) => toast("error", (e as Error).message))
       .finally(() => setIsLoading(false));
@@ -161,6 +160,7 @@ export default function DividendsContainer() {
                     style={{ cursor: 'pointer' }}
                     checked={selectedDividendIds.includes(dividend.id)}
                     onChange={() => onToggleItemCheckbox(dividend.id)}
+                    onClick={(e) => e.stopPropagation()}
                   />
                 </Table.Td>
                 <Table.Td>
@@ -231,6 +231,7 @@ export default function DividendsContainer() {
       .finally(() => {
         close();
         increment();
+        setSelectedDividendIds([]);
       });
   }
 

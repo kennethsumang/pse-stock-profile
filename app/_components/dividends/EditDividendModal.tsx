@@ -49,8 +49,12 @@ export default function EditDividendModal(props: Props) {
       return;
     }
 
-    await fetch(`${getCurrentDomain()}/api/dividends`, {
-      method: "POST",
+    if (!props.data) {
+      return;
+    }
+
+    await fetch(`${getCurrentDomain()}/api/dividends/${props.data.id}`, {
+      method: "PUT",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
         ...formData,
