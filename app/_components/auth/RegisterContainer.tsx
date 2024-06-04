@@ -2,7 +2,7 @@
 
 import { Paper, Text } from "@mantine/core";
 import Link from "next/link";
-import RegisterForm from "./RegisterForm";
+import RegisterFormComponent from "./RegisterFormComponent";
 
 /**
  * RegisterContainer component
@@ -30,7 +30,7 @@ export default function RegisterContainer() {
       >
         Register
       </Text>
-      <RegisterForm />
+      <RegisterFormComponent />
       <Text pt="1rem">
         Already have an account? <Link href="/">Log in</Link>.
       </Text>

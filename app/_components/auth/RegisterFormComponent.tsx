@@ -6,17 +6,13 @@ import { getCurrentDomain } from "@/app/_utils/http.library";
 import { useRouter } from "next/navigation";
 import {
   RegisterForm,
-  RegisterForm,
-  RegisterForm,
-  RegisterForm,
-  RegisterForm,
 } from "@/app/_types/auth";
 
 /**
  * RegisterForm component
  * @author Kenneth Sumang
  */
-export default function RegisterForm() {
+export default function RegisterFormComponent() {
   const router = useRouter();
   const toast = useToast();
   const form = useForm({
