@@ -297,7 +297,7 @@ export default function TransactionsContainer() {
         }}
       >
         {
-          selectedIdsInPage.length > 0 &&  <IconTrash size={20} color="red" style={{ cursor: "pointer" }} />
+          selectedTransactionIds.length > 0 &&  <IconTrash size={20} color="red" style={{ cursor: "pointer" }} />
         }
         <IconFilter
           size={20}
