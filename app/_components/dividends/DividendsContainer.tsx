@@ -29,6 +29,7 @@ import { IconFilter, IconTrash } from "@tabler/icons-react";
 export default function DividendsContainer() {
   const toast = useToast();
   const dividendKey = useDividendStore((state) => state.key);
+  const increment = useDividendStore((state) => state.increment);
   const [dividends, setDividends] = useState<Dividend[]>([]);
   const [count, setCount] = useState<number>(0);
   const [limitPerPage, setLimitPerPage] = useState<number>(10);
@@ -187,14 +188,14 @@ export default function DividendsContainer() {
    */
   function onTogglePageCheckbox(isChecked: boolean) {
     if (isChecked) {
-      const transactionIdsInPage = _.map(dividends, 'id');
-      const newList = [...selectedDividendIds, ...transactionIdsInPage];
+      const dividendIdsInPage = _.map(dividends, 'id');
+      const newList = [...selectedDividendIds, ...dividendIdsInPage];
       setSelectedDividendIds(_.uniq(newList));
       return;
     }
 
-    const transactionIdsInPage = _.map(dividends, 'id');
-    const newList = _.difference(selectedDividendIds, transactionIdsInPage);
+    const dividendIdsInPage = _.map(dividends, 'id');
+    const newList = _.difference(selectedDividendIds, dividendIdsInPage);
     setSelectedDividendIds(newList);
   }
 
@@ -202,7 +203,23 @@ export default function DividendsContainer() {
    * Handles deleting dividend records selected
    */
   function handleDeleteDividendRecords() {
-
+    const url = new URL(`${getCurrentDomain()}/api/dividends`);
+    fetch(
+      url.toString(),
+      {
+        method: 'DELETE',
+        body: JSON.stringify({
+          dividend_ids: selectedDividendIds,
+        })
+      }
+    )
+      .then((response) => response.json())
+      .then((response: DividendResponse) => toast("success", `${response.data.length} dividend records deleted.`))
+      .catch((e) => toast("error", (e as Error).message))
+      .finally(() => {
+        close();
+        increment();
+      });
   }
 
   /**
