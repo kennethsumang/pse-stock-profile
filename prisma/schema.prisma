@@ -1,0 +1,55 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Company {
+  id Int @id @default(autoincrement())
+  symbol String
+  company_name String
+  sector_name String
+  subsector_name String
+  listing_date String
+  created_at DateTime @default(now())
+
+  transactions Transaction[]
+  dividends Dividend[]
+  @@map("companies")
+}
+
+model Transaction {
+  id Int @id @default(autoincrement())
+  company_id Int
+  type String
+  price Decimal @db.Decimal(8, 2)
+  quantity Decimal @db.Decimal(8, 2)
+  tax_amount Decimal @db.Decimal(8, 2)
+  transaction_timestamp DateTime
+
+  company Company @relation(fields: [company_id], references: [id])
+
+  @@map("transactions")
+}
+
+model Dividend {
+  id Int @id @default(autoincrement())
+  company_id Int
+  amount_per_share Decimal @db.Decimal(8, 2)
+  no_of_shares Decimal @db.Decimal(8, 2)
+  tax_amount Decimal @db.Decimal(8, 2)
+  dividend_timestamp DateTime
+
+  company Company @relation(fields: [company_id], references: [id])
+
+  @@map("dividends")
+}

@@ -1,0 +1,37 @@
+version: '3.8'
+
+services:
+  psedb:
+    container_name: pse_db
+    image: postgres:16-alpine
+    restart: unless-stopped
+    ports:
+      - 5432:5432
+    volumes:
+      - psedb_data:/var/lib/postgresql/data
+    environment:
+      POSTGRES_DB: pse_stock_profile
+      POSTGRES_USER: pseuser
+      POSTGRES_PASSWORD: uqLR2LcbEEiKj9s
+      POSTGRES_INITDB_ARGS: "-E UTF8"
+    networks:
+      - host
+  
+  # pseapp:
+  #   container_name: pse_app
+  #   build:
+  #     context: .
+  #     dockerfile: Dockerfile
+  #   ports:
+  #     - '3000:3000'
+  #   environment:
+  #     - DATABASE_URL=postgresql://${DB_USER}:${DB_PASSWORD}@postgres:5432/${DB_NAME}
+  #     - NEXT_PUBLIC_LOGIN_PASSWORD=${NEXT_PUBLIC_LOGIN_PASSWORD}
+  #   depends_on:
+  #     - postgres
+
+networks:
+  host:
+
+volumes:
+  psedb_data:
