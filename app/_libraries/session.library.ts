@@ -7,14 +7,16 @@ export default class SessionLibrary {
   constructor() {
     this.config = config;
   }
-}
 
-export function get(req: Request, res: Response) {
-  const session = getIronSession(req, res, { password: "...", cookieName: "..." });
-}
+  get = async function (req: Request, res: Response) {
+    const session = await getIronSession(req, res, { password: "...", cookieName: "..." });
+  }
 
-export function post(req: Request, res: Response) {
-  const session = getIronSession(req, res, { password: "...", cookieName: "..." });
-  session.username = "Alison";
-  await session.save();
+  post = async function (req: Request, res: Response) {
+    const session = await getIronSession(req, res, { password: "...", cookieName: "..." });
+    session.user = {
+      name: 'Admin'
+    }
+    await session.save();
+  }
 }
